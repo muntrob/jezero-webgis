@@ -28,7 +28,8 @@ body {
   height: 100%;
 }
 .layer-switcher {
-  position: initial;
+  position: relative;
+  top: 30px;
 }
 
 #layers > ul > li:hover {
@@ -128,6 +129,35 @@ padding-left: 2.7em;
 }
 #panoramas > ul > li {
   list-style-type:none;
+}
+
+.tab-controls-menu {
+  position: relative;
+  top: 20px;
+  margin: -10px -20px 0;
+  height: 40px;
+  /*padding: 0 20px;*/
+  line-height: 40px;
+  font-size: 14.4pt;
+  color: #fff;
+  background-color: #0074d9; }
+
+.tab-controls-menu-item {
+  float:right;
+  /*margin: -10px -20px 0 0;*/
+  margin: 0 10px 0 0;
+  height: 40px;
+  /*padding: 0 20px;*/
+  padding: 0 10px;
+  line-height: 40px;
+  font-size: 14.4pt;
+  color: #fff;
+  background-color: #0074d9; }
+
+.tab-controls-menu-item:hover,
+.tab-controls-menu-item:focus {
+  text-decoration: none;
+  background-color: rgba(0,0,0,0.3);
 }
 
 #tooltip {

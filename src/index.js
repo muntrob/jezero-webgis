@@ -6,7 +6,8 @@ import GeoJSON from 'ol/format/GeoJSON';
 import {Fill, Stroke, Circle, Style, Text} from 'ol/style';
 import {Vector} from 'ol/layer';
 import TileWMS from 'ol/source/TileWMS';
-import { FullScreen, defaults as defaultControls, ScaleLine, ZoomToExtent } from 'ol/control';
+import LayerGroup from 'ol/layer/Group';
+import { Control, FullScreen, defaults as defaultControls, ScaleLine, ZoomToExtent } from 'ol/control';
 import {bbox as bboxStrategy} from 'ol/loadingstrategy';
 import Select from 'ol/interaction/Select';
 //import WebGLPointsLayer from 'ol/layer/WebGLPoints';
@@ -32,6 +33,9 @@ import {createStringXY} from 'ol/coordinate';
 import  AFRAME from 'aframe';
 
 import './jezero.css';
+
+
+
 var textarray=[];
 
 textarray[0]=`
@@ -389,6 +393,136 @@ wayxhr.onload = function() {
 }
 wayxhr.send();
 
+var lay01 = new TileLayer({
+  title: "Orthorectified image 01",
+  visible: true,
+  source: new TileWMS({
+    //url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+    url: "https://maps.planet.fu-berlin.de/eqc-bin/productid.py?",
+    params: { 
+      LAYERS: "hrsc4ihs",
+      PRODUCTID: "h0988_0000.ihs.07"
+   }
+  })
+});
+var lay02 = new TileLayer({
+  title: "Orthorectified image 02",
+  visible: true,
+  source: new TileWMS({
+    url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+    params: { 
+      LAYERS: "hrsc4ihs",
+      PRODUCTID: "h2228_0002.ihs.06"
+   }
+  })
+});
+var lay03 = new TileLayer({
+  title: "Orthorectified image 03",
+  visible: true,
+  source: new TileWMS({
+    url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+    params: { 
+      LAYERS: "hrsc4ihs",
+      PRODUCTID: "h5270_0000.ihs.06"
+   }
+  })
+});
+var lay04 = new TileLayer({
+  title: "Orthorectified image 04",
+  visible: true,
+  source: new TileWMS({
+    url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+    params: { 
+      LAYERS: "hrsc4",
+      PRODUCTID: "h7289_0000.nd4.08"
+   }
+  })
+});
+var lay05 = new TileLayer({
+  title: "Orthorectified image 05",
+  visible: true,
+  source: new TileWMS({
+    url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+    params: { 
+      LAYERS: "hrsc4",
+      PRODUCTID: "hd618_0000.nd4.03"
+   }
+  })
+});
+var lay06 = new TileLayer({
+  title: "Orthorectified image 06",
+  visible: true,
+  source: new TileWMS({
+    url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+    params: { 
+      LAYERS: "hrsc4",
+      PRODUCTID: "hj848_0000.nd4.03"
+   }
+  })
+});
+var lay07 = new TileLayer({
+  title: "Orthorectified image 07",
+  visible: true,
+  source: new TileWMS({
+    url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+    params: { 
+      LAYERS: "hrsc4",
+      PRODUCTID: "hj989_0000.nd4.04"
+   }
+  })
+});
+
+var lyrgrp01 = new LayerGroup({
+  title: 'Orthorectified images',
+  layers: [
+    lay01,
+    lay02,
+    lay03
+  ]
+})
+
+var lyrgrp02 = new LayerGroup({
+  title: 'Orthorectified images',
+  layers: [
+    lay04,
+    lay05,
+    lay06
+  ]
+})
+
+//
+// Define rotate to north control.
+//
+
+class RotateNorthControl extends Control {
+  /**
+   * @param {Object} [opt_options] Control options.
+   */
+  constructor(opt_options) {
+    const options = opt_options || {};
+
+    const button = document.createElement('button');
+    button.innerHTML = 'N';
+
+    const element = document.createElement('div');
+    element.className = 'rotate-north ol-unselectable ol-control';
+    element.appendChild(button);
+
+    super({
+      element: element,
+      target: options.target,
+    });
+
+    button.addEventListener('click', this.handleRotateNorth.bind(this), false);
+  }
+
+  handleRotateNorth() {
+    //this.getMap().getView().setRotation(0);
+    this.getMap().removeLayer(lay01);
+  }
+}
+
+
 const map = new Map({
   target: 'map',
   layers: [
@@ -416,76 +550,105 @@ const map = new Map({
         params: { LAYERS: "HMChsvlog" }
       })
     }),
-    new TileLayer({
-      title: "Orthorectified image 01",
-      source: new TileWMS({
-        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
-        params: { 
-          LAYERS: "hrsc4ihs",
-          PRODUCTID: "h0988_0000.ihs.07"
-       }
-      })
-    }),
-    new TileLayer({
-      title: "Orthorectified image 02",
-      source: new TileWMS({
-        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
-        params: { 
-          LAYERS: "hrsc4ihs",
-          PRODUCTID: "h2228_0002.ihs.06"
-       }
-      })
-    }),
-    new TileLayer({
-      title: "Orthorectified image 03",
-      source: new TileWMS({
-        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
-        params: { 
-          LAYERS: "hrsc4ihs",
-          PRODUCTID: "h5270_0000.ihs.06"
-       }
-      })
-    }),
-    new TileLayer({
-      title: "Orthorectified image 04",
-      source: new TileWMS({
-        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
-        params: { 
-          LAYERS: "hrsc4",
-          PRODUCTID: "h7289_0000.nd4.08"
-       }
-      })
-    }),
-    new TileLayer({
-      title: "Orthorectified image 05",
-      source: new TileWMS({
-        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
-        params: { 
-          LAYERS: "hrsc4",
-          PRODUCTID: "hd618_0000.nd4.03"
-       }
-      })
-    }),
-    new TileLayer({
-      title: "Orthorectified image 06",
-      source: new TileWMS({
-        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
-        params: { 
-          LAYERS: "hrsc4",
-          PRODUCTID: "hj848_0000.nd4.03"
-       }
-      })
-    }),
-    new TileLayer({
-      title: "Orthorectified image 07",
-      source: new TileWMS({
-        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
-        params: { 
-          LAYERS: "hrsc4",
-          PRODUCTID: "hj989_0000.nd4.04"
-       }
-      })
-    }),
+    //new TileLayer({
+    //  title: "Orthorectified image 01",
+    //  source: new TileWMS({
+    //    url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+    //    params: { 
+    //      LAYERS: "hrsc4ihs",
+    //      PRODUCTID: "h0988_0000.ihs.07"
+    //   }
+    //  })
+    //}),
+    
+    //lay01,
+    //lay02,
+    //lay03,
+    //lay04,
+    //lay05,
+    //lay06,
+    //lay07,
+
+    lyrgrp01,
+    lyrgrp02,
+    
+    //new TileLayer({
+    //  title: "Orthorectified image 01",
+    //  source: new TileWMS({
+    //    //url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+    //    url: "https://maps.planet.fu-berlin.de/eqc-bin/productid.py?",
+    //    params: { 
+    //      LAYERS: "hrsc4ihs",
+    //      PRODUCTID: "h0988_0000.ihs.07"
+    //   }
+    //  })
+    //}),
+    //new TileLayer({
+    //  title: "Orthorectified image 02",
+    //  visible: false,
+    //  source: new TileWMS({
+    //    url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+    //    params: { 
+    //      LAYERS: "hrsc4ihs",
+    //      PRODUCTID: "h2228_0002.ihs.06"
+    //   }
+    //  })
+    //}),
+    //new TileLayer({
+    //  title: "Orthorectified image 03",
+    //  visible: false,
+    //  source: new TileWMS({
+    //    url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+    //    params: { 
+    //      LAYERS: "hrsc4ihs",
+    //      PRODUCTID: "h5270_0000.ihs.06"
+    //   }
+    //  })
+    //}),
+    //new TileLayer({
+    //  title: "Orthorectified image 04",
+    //  visible: false,
+    //  source: new TileWMS({
+    //    url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+    //    params: { 
+    //      LAYERS: "hrsc4",
+    //      PRODUCTID: "h7289_0000.nd4.08"
+    //   }
+    //  })
+    //}),
+    //new TileLayer({
+    //  title: "Orthorectified image 05",
+    //  visible: false,
+    //  source: new TileWMS({
+    //    url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+    //    params: { 
+    //      LAYERS: "hrsc4",
+    //      PRODUCTID: "hd618_0000.nd4.03"
+    //   }
+    //  })
+    //}),
+    //new TileLayer({
+    //  title: "Orthorectified image 06",
+    //  visible: false,
+    //  source: new TileWMS({
+    //    url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+    //    params: { 
+    //      LAYERS: "hrsc4",
+    //      PRODUCTID: "hj848_0000.nd4.03"
+    //   }
+    //  })
+    //}),
+    //new TileLayer({
+    //  title: "Orthorectified image 07",
+    //  visible: false,
+    //  source: new TileWMS({
+    //    url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+    //    params: { 
+    //      LAYERS: "hrsc4",
+    //      PRODUCTID: "hj989_0000.nd4.04"
+    //   }
+    //  })
+    //}),
     new TileLayer({
       title: "Contour lines",
       source: new TileWMS({
@@ -559,10 +722,16 @@ const map = new Map({
       source: 'fullscreen',
     }),
     mousePositionControl,
-    new ZoomToExtent({label: 'O', extent: [4471445.622758097, 953062.4788152642, 4734194.672506754, 1227858.2631868462]})
+    new ZoomToExtent({label: 'O', extent: [4471445.622758097, 953062.4788152642, 4734194.672506754, 1227858.2631868462]})//,
+    //new RotateNorthControl({target: 'body'})
   ]),
   view: mainview
 });
+
+//var tst_button = new RotateNorthControl();
+//map.addControl(tst_button);
+//sidebar.addControl(tst_button);
+
 
 var sidebar = new Sidebar({
   element: 'sidebar',
@@ -692,6 +861,69 @@ var mapbutton = document.getElementById('mapbutton');
 mapbutton.parentElement.onclick=function() {
   returnToMap();
 };
+
+// ---------------------------------------------------------------------------------
+// Functionality: Cycle through a set/group of layers <- NOT YET WORKING !
+// ---------------------------------------------------------------------------------
+
+//var donothing = function (){console.log('after');}
+//
+//var cycleLyrs = function () {
+//  lyrgrp01.forEach(element => {
+//    map.getLayers(element).visibility = false;
+//    setTimeout(donothing, 500);
+//    console.log(element);
+//  })
+//};
+
+//var cycleLyrs = function () {
+//  LayerGroup.forEachRecursive(map, function(layer, idx, a) {
+//    lyrgrp01.getLayers(layer).visibility = false;
+//  });
+//};
+//
+//var cyclelyrsbtn = document.getElementById('cyclelyrsbtn');
+//cyclelyrsbtn.onclick=function() {
+//  cycleLyrs();
+//};
+// ---------------------------------------------------------------------------------
+
+var remlyrsfunc = function() {
+  map.removeLayer(lay01);
+  map.removeLayer(lay02);
+  map.removeLayer(lay03);
+  map.removeLayer(lay04);
+  map.removeLayer(lay05);
+  map.removeLayer(lay06);
+  map.removeLayer(lay07);
+  LayerSwitcher.renderPanel(map, toc, { reverse: true });
+}
+//Define remlyrs button onclick action
+//var remlyrstab = document.getElementById('remlyrstab');
+var remlyrsbtn = document.getElementById('remlyrsbtn');
+remlyrsbtn.onclick=function() {
+  remlyrsfunc();
+};
+
+var downloadlyrsfunc = function() {
+  map.addLayer(lay01);
+  map.addLayer(lay02);
+  map.addLayer(lay03);
+  map.addLayer(lay04);
+  map.addLayer(lay05);
+  map.addLayer(lay06);
+  map.addLayer(lay07);
+  //map.setLayerIndex(lay01, 3);
+  LayerSwitcher.renderPanel(map, toc, { reverse: true });
+}
+//Define downloadlyrs button onclick action
+//var downloadlyrstab = document.getElementById('downloadlyrstab');
+var downloadlyrsbtn = document.getElementById('downloadlyrsbtn');
+downloadlyrsbtn.onclick=function() {
+  downloadlyrsfunc();
+};
+
+
 var vrbutton = document.getElementById('vrbutton');
 vrbutton.parentElement.onclick=function() {
   console.dir('nothing');
@@ -786,6 +1018,8 @@ var previousCenter=mainview.getCenter();
 map.on('moveend', function (event) {
   //console.dir([Math.abs(mainview.getCenter()[0]-previousCenter[0]),Math.abs(mainview.getCenter()[1]-previousCenter[1])]);
 })
+
+//map.removeLayer(lay01);
 
 var selectedLabel;
 var renderPanViews = function() {

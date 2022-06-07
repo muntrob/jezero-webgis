@@ -120,11 +120,12 @@ the swell of the Pliva Vallis outflow channel.</p>
 `
 //roverCoords=[77.45081155,18.44467749]
 proj4.defs("EPSG:49901", "+proj=longlat +R=3396190 +no_defs");
+proj4.defs("EPSG:49910", "+proj=eqc +lat_ts=0 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +R=3396190 +units=m +no_defs");
 proj4.defs("EPSG:49911", "+proj=eqc +lat_ts=0 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +R=3396190 +units=m +no_defs");
 register(proj4);
 //https://maps.planet.fu-berlin.de/jez-bin/wms?
-var projection49911 = new Projection({
-  code: "EPSG:49911",
+var projection49910 = new Projection({
+  code: "EPSG:49910",
   global: true,
   units: 'm',
   //extent: [4000000, 0, 4500000, 500000],
@@ -132,7 +133,27 @@ var projection49911 = new Projection({
   //extent: [4536590.000, 1013775.000, 4683160.000, 1180560.000],
   //extent: [4363662.941221565, 859975.4272094945, 4808874.452132847, 1296750.544287833],
   getPointResolution: function(resolution, point) {
-    var toEPSG49901 = getTransform(get("EPSG:49911"), get("EPSG:49901"));
+    var toEPSG49901 = getTransform(get("EPSG:49910"), get("EPSG:49901"));
+    var vertices = [ point[0] - resolution / 2, point[1], point[0] + resolution / 2, point[1] ];
+    vertices = toEPSG49901(vertices, vertices, 2);
+    //console.log(vertices);
+    return getDistance(vertices.slice(0, 2), vertices.slice(2, 4), 3396190);
+  }
+});
+addProjection(projection49910);
+var projection49911 = new Projection({
+  ////code: "EPSG:49911",
+  code: "EPSG:49910",
+  global: true,
+  units: 'm',
+  //extent: [4000000, 0, 4500000, 500000],
+  extent: [-10668848.652, -5215881.563, 10668848.652, 5215881.563],
+  ////extent: [-10668848.652, -5215881.563, 10668848.652, 5215881.563],
+  //extent: [4536590.000, 1013775.000, 4683160.000, 1180560.000],
+  //extent: [4363662.941221565, 859975.4272094945, 4808874.452132847, 1296750.544287833],
+  getPointResolution: function(resolution, point) {
+    ////var toEPSG49901 = getTransform(get("EPSG:49911"), get("EPSG:49901"));
+    var toEPSG49901 = getTransform(get("EPSG:49910"), get("EPSG:49901"));
     var vertices = [ point[0] - resolution / 2, point[1], point[0] + resolution / 2, point[1] ];
     vertices = toEPSG49901(vertices, vertices, 2);
     //console.log(vertices);
@@ -147,6 +168,20 @@ var projection49901 = new Projection({
 });
 addProjection(projection49901);
 
+//addCoordinateTransforms(
+//  projection49910,
+//  projection49911,
+//  function (coordinate) {
+//    var xdst=3396190*(coordinate[0]/180*Math.PI);
+//    var ydst=3396190*(coordinate[1]/180*Math.PI);
+//    return [ xdst, ydst ];
+//  },
+//  function (coordinate) {
+//    var xdst=(coordinate[0]*180/Math.PI)/3396190;
+//    var ydst=(coordinate[1]*180/Math.PI)/3396190;
+//    return [ xdst, ydst ];
+//  }
+//);
 addCoordinateTransforms(
   projection49901,
   projection49911,
@@ -162,7 +197,8 @@ addCoordinateTransforms(
   }
 );
 
-var zoom = 14;
+////var zoom = 14;
+var zoom = 8;
 var mapCenter = transform([77.4565,18.4475], projection49901, projection49911);
 //var mapCenter = transform([77.6790,18.4022], projection49901, projection49911);
 var rotation = 0;
@@ -170,11 +206,12 @@ var rotation = 0;
 var mainview = new View({
     center: mapCenter,
     zoom: zoom,
-    minZoom: 9,
+    //minZoom: 9,
+    minZoom: 2,
     maxZoom: 19,
     constrainResolution: true,
-    extent: [4504877, 1007670, 4741975, 1185493],
-    //extent: [-10668848.652, -5215881.563, 10668848.652, 5215881.563],
+    //extent: [4504877, 1007670, 4741975, 1185493],
+    extent: [-10668848.652, -5215881.563, 10668848.652, 5215881.563],
     projection: projection49911,
     //maxResolution: 0.3179564670324326
   })
@@ -262,7 +299,8 @@ var styleFeature = new Style({
 var poi = new Vector({
   title: "Panoramic views",
   source: poiSource,
-  style: styleFeature
+  style: styleFeature,
+  minZoom: 8
 });
 
 // ROVER TRACK
@@ -358,9 +396,13 @@ const map = new Map({
       title: "Topography",
       type: 'base',
       visible: false,
+      //source: new TileWMS({
+      //  url: "https://maps.planet.fu-berlin.de/jez-bin/wms?",
+      //  params: { LAYERS: "base-dtm" }
+      //})
       source: new TileWMS({
-        url: "https://maps.planet.fu-berlin.de/jez-bin/wms?",
-        params: { LAYERS: "base-dtm" }
+        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+        params: { LAYERS: "HRSC-single-dtms" }
       })
     }),
     new TileLayer({
@@ -368,13 +410,89 @@ const map = new Map({
       opacity: 1,
       type: 'base',
       visible: true,
-      source: source
+      //source: source
+      source: new TileWMS({
+        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+        params: { LAYERS: "HMChsvlog" }
+      })
+    }),
+    new TileLayer({
+      title: "Orthorectified image 01",
+      source: new TileWMS({
+        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+        params: { 
+          LAYERS: "hrsc4ihs",
+          PRODUCTID: "h0988_0000.ihs.07"
+       }
+      })
+    }),
+    new TileLayer({
+      title: "Orthorectified image 02",
+      source: new TileWMS({
+        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+        params: { 
+          LAYERS: "hrsc4ihs",
+          PRODUCTID: "h2228_0002.ihs.06"
+       }
+      })
+    }),
+    new TileLayer({
+      title: "Orthorectified image 03",
+      source: new TileWMS({
+        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+        params: { 
+          LAYERS: "hrsc4ihs",
+          PRODUCTID: "h5270_0000.ihs.06"
+       }
+      })
+    }),
+    new TileLayer({
+      title: "Orthorectified image 04",
+      source: new TileWMS({
+        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+        params: { 
+          LAYERS: "hrsc4",
+          PRODUCTID: "h7289_0000.nd4.08"
+       }
+      })
+    }),
+    new TileLayer({
+      title: "Orthorectified image 05",
+      source: new TileWMS({
+        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+        params: { 
+          LAYERS: "hrsc4",
+          PRODUCTID: "hd618_0000.nd4.03"
+       }
+      })
+    }),
+    new TileLayer({
+      title: "Orthorectified image 06",
+      source: new TileWMS({
+        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+        params: { 
+          LAYERS: "hrsc4",
+          PRODUCTID: "hj848_0000.nd4.03"
+       }
+      })
+    }),
+    new TileLayer({
+      title: "Orthorectified image 07",
+      source: new TileWMS({
+        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+        params: { 
+          LAYERS: "hrsc4",
+          PRODUCTID: "hj989_0000.nd4.04"
+       }
+      })
     }),
     new TileLayer({
       title: "Contour lines",
       source: new TileWMS({
         url: "https://maps.planet.fu-berlin.de/jez/?",
-        params: { LAYERS: "contour" }
+        params: { 
+          LAYERS: "contour"
+       }
       })
     }),
     new TileLayer({
@@ -404,6 +522,24 @@ const map = new Map({
     rover,
     track,
     way,
+    new TileLayer({
+      title: "Nomenclature",
+      source: new TileWMS({
+        url: "https://maps.planet.fu-berlin.de/eqc-bin/wms?",
+        params: { 
+          LAYERS: "nomenclature"
+       }
+      })
+    }),
+    new TileLayer({
+      title: "Landingsites",
+      source: new TileWMS({
+        url: "https://maps.planet.fu-berlin.de/eqc-bin/wms?",
+        params: { 
+          LAYERS: "landingsites"
+       }
+      })
+    }),
     new TileLayer({
       title: "Lat/Lon GRID",
       source: new TileWMS({

@@ -532,7 +532,8 @@ class RotateNorthControl extends Control {
 var hrsc4aNdWfs = new Vector({
 	title: 'Level-4 single-strip images (archive)',
 	infodoc: 'src/hrsc-nd4a.html',
-	visible: false,
+//	visible: false,
+  visible: true,
 	type: 'query',
 	validsrs: 'eqc sps nps',
 //  validsrs: 'EPSG:49910',
@@ -552,9 +553,11 @@ var hrsc4aNdWfs = new Vector({
     }),
 });
 var allHrsc4aNdWfs = new Vector({
-    source: new VectorSource({
-        wrapX: false
-    })
+  title: 'Level-4 single-strip images (archive) [SELECTABLE]', // 'title' parameter is necessary to be able to make the layer (in-)visible
+//  visible: false,
+  source: new VectorSource({
+    wrapX: false
+  })
 });
 
 
@@ -686,16 +689,16 @@ const map = new Map({
     lyrgrp01,
     lyrgrp02,
     
-    new TileLayer ({
-      title: "MEx HRSC ND3",
-      source: new TileWMS({
-        url: "https://maps.planet.fu-berlin.de/eqc-bin/wms?",
-        params: { 
-          LAYERS: "hrsc4nd", 
-          TIME: "2018-06-01T16:38:38.000Z/2022-06-30T00:48:51.000Z" 
-        },
-      })
-    }),
+//    new TileLayer ({
+//      title: "MEx HRSC ND3",
+//      source: new TileWMS({
+//        url: "https://maps.planet.fu-berlin.de/eqc-bin/wms?",
+//        params: { 
+//          LAYERS: "hrsc4nd", 
+//          TIME: "2018-06-01T16:38:38.000Z/2022-06-30T00:48:51.000Z" 
+//        },
+//      })
+//    }),
 
     //new TileLayer({
     //  title: "Orthorectified image 01",

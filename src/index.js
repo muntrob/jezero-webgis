@@ -522,6 +522,56 @@ class RotateNorthControl extends Control {
   }
 }
 
+/* HRSC Level 4 Highlight layer*/
+var Hrsc4Highlight = new Vector({
+	type: 'selection',
+	target: 'hrsc4',
+    visible: true,
+    renderBuffer: 0,
+    source: new VectorSource(),
+    style: new Style({
+        stroke: new Stroke({
+            color: 'rgba(255,255,255, 1.0)',
+            width: 1
+        })
+    })
+});
+
+
+/* HRSC ND4 Footprints WFS*/
+var hrsc4NdWfs = new Vector({
+	title: 'Level-4 single-strip images (prelim.)',
+	infodoc: 'src/hrsc-nd4.html',
+	visible: false,
+	type: 'query',
+	validsrs: 'sps eqc nps',
+	opacity: 0.5,
+    transparent: true,
+    source: new VectorSource({
+        wrapX: false
+    }),
+    style: new Style({
+        stroke: new Stroke({
+            color: 'rgba(0,0,0, 1.0)',
+            width: 1
+        }),
+		fill: new Fill({
+         color: 'rgba(255,255,255,1)'
+       })
+    }),
+});
+
+
+
+//hrsc4NdWfs.getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
+//  Hrsc4Highlight.getSource().addFeature(feature);
+//})
+//hrsc4NdWfs.getSource().forEachFeature(function(feature) {
+//  Hrsc4Highlight.getSource().addFeature(feature);
+//});
+
+
+
 
 const map = new Map({
   target: 'map',
@@ -571,6 +621,9 @@ const map = new Map({
 
     lyrgrp01,
     lyrgrp02,
+
+    Hrsc4Highlight,
+    hrsc4NdWfs,
     
     //new TileLayer({
     //  title: "Orthorectified image 01",

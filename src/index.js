@@ -3,6 +3,7 @@ import {Map, View, Feature} from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
+import WFS from 'ol/format/WFS';
 import {Fill, Stroke, Circle, Style, Text} from 'ol/style';
 import {Vector} from 'ol/layer';
 import TileWMS from 'ol/source/TileWMS';
@@ -202,7 +203,8 @@ addCoordinateTransforms(
 );
 
 ////var zoom = 14;
-var zoom = 8;
+////var zoom = 8;
+var zoom = 1;
 var mapCenter = transform([77.4565,18.4475], projection49901, projection49911);
 //var mapCenter = transform([77.6790,18.4022], projection49901, projection49911);
 var rotation = 0;
@@ -211,7 +213,8 @@ var mainview = new View({
     center: mapCenter,
     zoom: zoom,
     //minZoom: 9,
-    minZoom: 2,
+    //minZoom: 2,
+    //minZoom: 0,
     maxZoom: 19,
     constrainResolution: true,
     //extent: [4504877, 1007670, 4741975, 1185493],
@@ -522,29 +525,17 @@ class RotateNorthControl extends Control {
   }
 }
 
-/* HRSC Level 4 Highlight layer*/
-var Hrsc4Highlight = new Vector({
-	type: 'selection',
-	target: 'hrsc4',
-    visible: true,
-    renderBuffer: 0,
-    source: new VectorSource(),
-    style: new Style({
-        stroke: new Stroke({
-            color: 'rgba(255,255,255, 1.0)',
-            width: 1
-        })
-    })
-});
 
 
-/* HRSC ND4 Footprints WFS*/
-var hrsc4NdWfs = new Vector({
-	title: 'Level-4 single-strip images (prelim.)',
-	infodoc: 'src/hrsc-nd4.html',
+
+/* HRSC ND4a Footprints WFS*/
+var hrsc4aNdWfs = new Vector({
+	title: 'Level-4 single-strip images (archive)',
+	infodoc: 'src/hrsc-nd4a.html',
 	visible: false,
 	type: 'query',
-	validsrs: 'sps eqc nps',
+	validsrs: 'eqc sps nps',
+//  validsrs: 'EPSG:49910',
 	opacity: 0.5,
     transparent: true,
     source: new VectorSource({
@@ -560,18 +551,86 @@ var hrsc4NdWfs = new Vector({
        })
     }),
 });
+var allHrsc4aNdWfs = new Vector({
+    source: new VectorSource({
+        wrapX: false
+    })
+});
 
 
-
-//hrsc4NdWfs.getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
-//  Hrsc4Highlight.getSource().addFeature(feature);
-//})
-//hrsc4NdWfs.getSource().forEachFeature(function(feature) {
-//  Hrsc4Highlight.getSource().addFeature(feature);
-//});
-
-
-
+var initHrsc4a = function(){
+	allHrsc4aNdWfs.getSource().clear();
+    var queryLayer='';
+    var featureRequest = new WFS().writeGetFeature({
+//        featureNS: 'https://'+app.ogchost+app.cgi,
+//featureNS: 'https://maps.planet.fu-berlin.de/eqc-bin/wfs?',
+featureNS: 'https://maps.planet.fu-berlin.de/eqc-bin/wms?',
+        featureTypes: ['hrsc4and'],
+        outputFormat: 'geojson',
+//        srsName: app.currentProjection.getCode(),
+        srsName: 'EPSG:49910',
+        maxFeatures: 10000
+    });
+//    fetch('https://'+app.ogchost+app.cgi, {
+//    fetch('https://maps.planet.fu-berlin.de/eqc-bin/wfs?', {
+    fetch('https://maps.planet.fu-berlin.de/eqc-bin/wms?', {
+        method: 'POST',
+        body: new XMLSerializer().serializeToString(featureRequest)
+      }).then(function(response) {
+          return response.json();
+      }).then(function(json) {
+        var features = new GeoJSON().readFeatures(json);
+        allHrsc4aNdWfs.getSource().addFeatures(features);
+        console.dir(features.length + ' HRSC4a sequences retrieved.');
+        refreshLevel4a();
+      }).catch(function(err) {
+          console.dir(err);
+    });
+}
+initHrsc4a();
+var refreshLevel4a = function() {
+	hrsc4aNdWfs.getSource().clear();
+	var inciMin=0;
+        allHrsc4aNdWfs.getSource().forEachFeature(function(feature){
+    	var scale=feature.getProperties().map_scale;
+    	var ls=feature.getProperties().ls;
+    	var starttime=new Date(feature.getProperties().start_time+'Z');
+    	var stoptime=new Date(feature.getProperties().stop_time+'Z');
+    	if (parseFloat(feature.getProperties().stopinci)>parseFloat(feature.getProperties().startinci)) {
+    		var inci=[parseFloat(feature.getProperties().startinci),parseFloat(feature.getProperties().stopinci)];
+    	} else {
+    		var inci=[parseFloat(feature.getProperties().stopinci),parseFloat(feature.getProperties().startinci)];
+    	}
+    	var minltst=new Date('1970-01-01T'+feature.getProperties().minltst+'Z');
+    	var maxltst=new Date('1970-01-01T'+feature.getProperties().maxltst+'Z');
+    	if ((app.selMaxRes != app.maxRes) && (scale > app.selMaxRes)) {
+			return null;
+    	}
+    	if ((app.selMinRes != app.minRes) && (scale < app.selMinRes)) {
+			return null;
+    	}
+    	if ((app.selMaxLs != app.maxLs) && (ls > app.selMaxLs)) {
+			return null;
+    	}
+    	if ((app.selMinLs != app.minLs) && (ls < app.selMinLs)) {
+			return null;
+    	}
+    	if ((stoptime < app.startTime ) || (starttime > app.stopTime)) {
+    		return null;
+    	}
+    	if ((maxltst < app.startLocalTime ) || (minltst > app.stopLocalTime)) {
+    		return null;
+    	}
+    	if ((inci[1] < app.inci[0] ) || ( inci[0] > app.inci[1] && app.inci[1] != app.timePanel.inciSlider.getAttribute('max') ) ) {
+    		return null;
+    	}
+    	if (inci[0]>inciMin) {
+    		inciMin=inci[0];
+    	}
+    	hrsc4aNdWfs.getSource().addFeature(feature);
+    });
+    console.dir(hrsc4aNdWfs.getSource().getFeatures().length + ' HRSC4a sequences loaded.');
+}
 
 const map = new Map({
   target: 'map',
@@ -619,12 +678,25 @@ const map = new Map({
     //lay06,
     //lay07,
 
+
+    hrsc4aNdWfs,
+    allHrsc4aNdWfs,
+
+
     lyrgrp01,
     lyrgrp02,
-
-    Hrsc4Highlight,
-    hrsc4NdWfs,
     
+    new TileLayer ({
+      title: "MEx HRSC ND3",
+      source: new TileWMS({
+        url: "https://maps.planet.fu-berlin.de/eqc-bin/wms?",
+        params: { 
+          LAYERS: "hrsc4nd", 
+          TIME: "2018-06-01T16:38:38.000Z/2022-06-30T00:48:51.000Z" 
+        },
+      })
+    }),
+
     //new TileLayer({
     //  title: "Orthorectified image 01",
     //  source: new TileWMS({

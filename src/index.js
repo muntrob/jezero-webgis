@@ -36,6 +36,15 @@ import  AFRAME from 'aframe';
 import './jezero.css';
 
 
+import {
+  and as andFilter,
+  equalTo as equalToFilter,
+  like as likeFilter,
+  greaterThanOrEqualTo as greaterThanOrEqualToFilter,
+  lessThanOrEqualTo as lessThanOrEqualToFilter
+} from "ol/format/filter";
+
+
 
 var textarray=[];
 
@@ -560,19 +569,43 @@ var allHrsc4aNdWfs = new Vector({
   })
 });
 
+var startTime=new Date('2009-01-01T00:00:00.000Z');
+var stopTime=new Date('2013-01-01T00:00:00.000Z');
+
+var updateTimesonWmsLayers = function() {
+//	hrsc4aNdWms.getSource().setUrl('https://maps.planet.fu-berlin.de/eqc-bin/wms?'+'TIME=' + app.startTime.toISOString() + '/' + app.stopTime.toISOString() + '&');
+	hrsc4aNdWfs.getSource().setUrl('https://maps.planet.fu-berlin.de/eqc-bin/wms?'+'TIME=' + startTime.toISOString() + '/' + stopTime.toISOString() + '&');
+};
+
+
 
 var initHrsc4a = function(){
 	allHrsc4aNdWfs.getSource().clear();
     var queryLayer='';
     var featureRequest = new WFS().writeGetFeature({
 //        featureNS: 'https://'+app.ogchost+app.cgi,
-//featureNS: 'https://maps.planet.fu-berlin.de/eqc-bin/wfs?',
-featureNS: 'https://maps.planet.fu-berlin.de/eqc-bin/wms?',
+//        featureNS: 'https://maps.planet.fu-berlin.de/eqc-bin/wfs?',
+        featureNS: 'https://maps.planet.fu-berlin.de/eqc-bin/wms?',
         featureTypes: ['hrsc4and'],
         outputFormat: 'geojson',
 //        srsName: app.currentProjection.getCode(),
         srsName: 'EPSG:49910',
-        maxFeatures: 10000
+        maxFeatures: 10000,
+        //filter: andFilter(
+        //  likeFilter('name', 'Mississippi*'),
+        //  equalToFilter('waterway', 'riverbank')
+        //),
+        //filter: //andFilter(
+        //  equalToFilter('map_scale', '50.0000')
+        ////),
+        //,
+        filter: andFilter(
+          // The filter seems to work also for timestamps without the letters 'T' and 'Z' in the string:
+//          lessThanOrEqualToFilter('stop_time', '2005-01-01 00:00:00.000'),
+//          greaterThanOrEqualToFilter('start_time', '1996-01-01 00:00:00.000'),
+          lessThanOrEqualToFilter('stop_time', '2005-01-01T00:00:00.000Z'),
+          greaterThanOrEqualToFilter('start_time', '1996-01-01T00:00:00.000Z'),
+        ),
     });
 //    fetch('https://'+app.ogchost+app.cgi, {
 //    fetch('https://maps.planet.fu-berlin.de/eqc-bin/wfs?', {
@@ -585,6 +618,9 @@ featureNS: 'https://maps.planet.fu-berlin.de/eqc-bin/wms?',
         var features = new GeoJSON().readFeatures(json);
         allHrsc4aNdWfs.getSource().addFeatures(features);
         console.dir(features.length + ' HRSC4a sequences retrieved.');
+        //
+        //updateTimesonWmsLayers();
+
         refreshLevel4a();
       }).catch(function(err) {
           console.dir(err);
@@ -597,8 +633,12 @@ var refreshLevel4a = function() {
         allHrsc4aNdWfs.getSource().forEachFeature(function(feature){
     	var scale=feature.getProperties().map_scale;
     	var ls=feature.getProperties().ls;
-    	var starttime=new Date(feature.getProperties().start_time+'Z');
-    	var stoptime=new Date(feature.getProperties().stop_time+'Z');
+//    	var starttime=new Date(feature.getProperties().start_time+'Z');
+//    	var stoptime=new Date(feature.getProperties().stop_time+'Z');
+      var starttime=new Date('2009-01-01T00:00:00.000Z');
+    	var stoptime=new Date('2013-01-01T00:00:00.000Z');
+
+
     	if (parseFloat(feature.getProperties().stopinci)>parseFloat(feature.getProperties().startinci)) {
     		var inci=[parseFloat(feature.getProperties().startinci),parseFloat(feature.getProperties().stopinci)];
     	} else {

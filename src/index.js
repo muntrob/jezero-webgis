@@ -502,6 +502,25 @@ var lyrgrp02 = new LayerGroup({
   ]
 })
 
+var lyrgrp03 = new LayerGroup({
+  title: 'Two groups',
+  layers: [
+    lyrgrp01,
+    lyrgrp02
+  ]
+})
+
+var lyrgrp04 = new LayerGroup({
+  title: 'Main group',
+  // The option 'combine' combines all child layers and layergroups into a single layer which 
+  // can either be switched on or off in the menu.
+  //combine: true, 
+    layers: [
+    lyrgrp03
+  ]
+})
+
+
 //
 // Define rotate to north control.
 //
@@ -728,6 +747,9 @@ const map = new Map({
 
     lyrgrp01,
     lyrgrp02,
+
+    lyrgrp03,
+    lyrgrp04,
     
 //    new TileLayer ({
 //      title: "MEx HRSC ND3",

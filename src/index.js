@@ -511,6 +511,7 @@ var lyrgrp03 = new LayerGroup({
 })
 
 var lyrgrp04 = new LayerGroup({
+  fold: "close",
   title: 'Main group',
   // The option 'combine' combines all child layers and layergroups into a single layer which 
   // can either be switched on or off in the menu.

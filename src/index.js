@@ -746,10 +746,10 @@ const map = new Map({
     allHrsc4aNdWfs,
 
 
-    lyrgrp01,
-    lyrgrp02,
+    //lyrgrp01,
+    //lyrgrp02,
 
-    lyrgrp03,
+    //lyrgrp03,
     lyrgrp04,
     
 //    new TileLayer ({

@@ -494,6 +494,8 @@ var lyrgrp01 = new LayerGroup({
 })
 
 var lyrgrp02 = new LayerGroup({
+  type: 'sortpanel',
+  sortable: true,
   title: 'Orthorectified images',
   layers: [
     lay04,
@@ -521,6 +523,8 @@ var lyrgrp04 = new LayerGroup({
   ]
 })
 
+// Activate sort panel for LayerSwitcher:
+LayerSwitcher.sortPanelActive=true;
 
 //
 // Define rotate to north control.
@@ -922,6 +926,48 @@ const map = new Map({
 //var tst_button = new RotateNorthControl();
 //map.addControl(tst_button);
 //sidebar.addControl(tst_button);
+
+
+// Source: Example - OL - Select Features by Hover
+// https://openlayers.org/en/latest/examples/select-hover-features.html
+const selectStyle = new Style({
+  fill: new Fill({
+    color: '#eeeeee',
+  }),
+  stroke: new Stroke({
+    color: 'rgba(255, 255, 255, 0.7)',
+    width: 2,
+  }),
+});
+
+const status = document.getElementById('status');
+
+let selected = null;
+map.on('click', function (e) {
+  if (selected !== null) {
+    selected.setStyle(undefined);
+    selected = null;
+  }
+
+  map.forEachFeatureAtPixel(e.pixel, function (f) {
+    selected = f;
+    selectStyle.getFill().setColor(f.get('COLOR') || '#eeeeee');
+    f.setStyle(selectStyle);
+    return true;
+  });
+
+  if (selected) {
+    //status.innerHTML = selected.get('ECO_NAME');
+    status.innerHTML = selected.get('source_product_id');
+    //status.innerHTML = "selected.get('filename')";
+  } else {
+    status.innerHTML = '&nbsp;';
+  }
+});
+
+
+
+
 
 
 var sidebar = new Sidebar({

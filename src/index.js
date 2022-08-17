@@ -523,6 +523,15 @@ var lyrgrp04 = new LayerGroup({
   ]
 })
 
+
+//Dynamic layer group
+var dynlyrgrp = new LayerGroup({
+  fold: "close",
+  title: 'Dynamic layer group'
+})
+
+
+
 // Activate sort panel for LayerSwitcher:
 LayerSwitcher.sortPanelActive=true;
 
@@ -703,6 +712,19 @@ const map = new Map({
   target: 'map',
   layers: [
     new TileLayer({
+      title: "MOLA hill-shaded gray",
+      type: 'base',
+      visible: true,
+      //source: new TileWMS({
+      //  url: "https://maps.planet.fu-berlin.de/jez-bin/wms?",
+      //  params: { LAYERS: "base-dtm" }
+      //})
+      source: new TileWMS({
+        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+        params: { LAYERS: "MOLA-gray-hs" }
+      })
+    }),
+    new TileLayer({
       title: "Topography",
       type: 'base',
       visible: false,
@@ -719,7 +741,7 @@ const map = new Map({
       title: "Colour image map",
       opacity: 1,
       type: 'base',
-      visible: true,
+      visible: false,
       //source: source
       source: new TileWMS({
         url: "https://maps.planet.fu-berlin.de/eqc/wms?",
@@ -755,6 +777,11 @@ const map = new Map({
 
     //lyrgrp03,
     lyrgrp04,
+
+
+    dynlyrgrp,
+
+
     
 //    new TileLayer ({
 //      title: "MEx HRSC ND3",
@@ -943,6 +970,10 @@ const selectStyle = new Style({
 const status = document.getElementById('status');
 
 let selected = null;
+let wfsProductid = null;
+let wfsFilename = null;
+let wfsTarget = null;
+
 map.on('click', function (e) {
   if (selected !== null) {
     selected.setStyle(undefined);
@@ -957,9 +988,42 @@ map.on('click', function (e) {
   });
 
   if (selected) {
+    wfsFilename = selected.get('file_name');
+    wfsProductid = selected.get('source_product_id');
+    wfsTarget = selected.get('target');
+
     //status.innerHTML = selected.get('ECO_NAME');
-    status.innerHTML = selected.get('source_product_id');
+    //status.innerHTML = selected.get('source_product_id');
+    status.innerHTML = wfsProductid;
     //status.innerHTML = "selected.get('filename')";
+    
+    
+
+    var tmpTile = new TileLayer({
+      title: wfsProductid,
+      opacity: 1,
+      visible: true,
+      //source: source
+      source: new TileWMS({
+        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+        params: { 
+          //LAYERS: "HMChsvlog"
+          //LAYERS: selected.get('source_product_id')
+          LAYERS: "hrsc4",
+          VERSION: '1.3.0',
+          TILED: true,
+          //PRODUCTID: wfsFilename,
+          PRODUCTID: wfsProductid,
+        }
+      })
+    });
+    //TODO: Check if layer with this name already exists and just update its content, not add a new one
+    //if (dynlyrgrp.getLayers().title != )
+    dynlyrgrp.getLayers().insertAt(0,tmpTile);
+    //dynlyrgrp.push(tmpTile);
+    LayerSwitcher.renderPanel(map, toc, { reverse: true });
+
+
   } else {
     status.innerHTML = '&nbsp;';
   }

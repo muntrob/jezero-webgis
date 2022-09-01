@@ -29,6 +29,10 @@ import proj4 from 'proj4';
 import MousePosition from 'ol/control/MousePosition';
 import {createStringXY} from 'ol/coordinate';
 
+import Overlay from 'ol/Overlay';
+import {toLonLat} from 'ol/proj';
+import {toStringHDMS} from 'ol/coordinate';
+
 //import * as THREE from 'three';
 //import * as PANOLENS from 'panolens';
 import  AFRAME from 'aframe';
@@ -231,6 +235,13 @@ var mainview = new View({
     projection: projection49911,
     //maxResolution: 0.3179564670324326
   })
+
+
+// Popup
+//var popup = new Popup();
+//map.addOverlay(popup);
+
+
 
 var source = new TileWMS({
         url: "https://maps.planet.fu-berlin.de/jez/?",
@@ -976,6 +987,41 @@ var refreshLevel4a = function() {
     console.dir(hrsc4aNdWfs.getSource().getFeatures().length + ' HRSC4a sequences loaded.');
 }
 
+
+// Overlays
+/**
+ * Elements that make up the popup.
+ */
+ const container = document.getElementById('popup');
+ const content = document.getElementById('popup-content');
+ const closer = document.getElementById('popup-closer');
+ 
+ /**
+  * Create an overlay to anchor the popup to the map.
+  */
+ const overlay = new Overlay({
+   element: container,
+   autoPan: {
+     animation: {
+       duration: 250,
+     },
+   },
+ });
+ 
+ /**
+  * Add a click handler to hide the popup.
+  * @return {boolean} Don't follow the href.
+  */
+ closer.onclick = function () {
+   overlay.setPosition(undefined);
+   closer.blur();
+   return false;
+ };
+
+
+
+
+
 const map = new Map({
   target: 'map',
   layers: [
@@ -1217,6 +1263,7 @@ const map = new Map({
     new ZoomToExtent({label: 'O', extent: [4471445.622758097, 953062.4788152642, 4734194.672506754, 1227858.2631868462]})//,
     //new RotateNorthControl({target: 'body'})
   ]),
+  overlays: [overlay],
   view: mainview
 });
 
@@ -1334,7 +1381,7 @@ var styleFeatureBig = new Style({
   });
 var mapdiv = document.getElementById('map');
 //var currentFeature = new Feature();
-var displayFeatureInfo = function (pixel) {
+var displayFeatureInfo = function (evt, pixel) {
   tooltip.style.left = pixel[0] + 'px';
   tooltip.style.top = (pixel[1] - 50) + 'px';
   var feature = map.forEachFeatureAtPixel(pixel, function (feature) {
@@ -1374,11 +1421,22 @@ var displayFeatureInfo = function (pixel) {
       feature.setStyle();
       feature.setStyle(styleFeatureBig);
       currentFeature=feature;
-      var text = feature.get('Year');
+      var text = feature.get('Name') + "<br>" + feature.get('Year');
       tooltip.style.display = 'none';
       tooltip.innerHTML = text;
       tooltip.style.display = 'block';
       mapdiv.style.cursor = "pointer";
+
+      const coordinate = evt.coordinate;
+//      const coordinate = pixel.getSource.coordinate;
+      const hdms = toStringHDMS(toLonLat(coordinate));
+
+      content.innerHTML = '<p>You clicked here:</p><code>' + hdms + '</code><p>' + feature.get('Name') + '</p>\
+      <img src="https://www.geo.fu-berlin.de/geol/fachrichtungen/planet/press/archiv2019/2019_total_mars/_content/slider_totalmars.jpg" width="275" style="padding:0px" align="center">\
+      <br><br><tr><td>Link: </td><td><a href="' + feature.get('URL_PR') + '">Download</a></td></tr>';
+      // Image example link: <img src="https://www.geo.fu-berlin.de/geol/fachrichtungen/planet/press/archiv2019/2019_total_mars/_content/slider_totalmars.jpg" width="275" style="padding:0px" align="center">
+      //<img src="https://www.geo.fu-berlin.de/geol/fachrichtungen/planet/press/archiv' + feature.get('Year') + '/' + feature.get('Year') + '_total_mars/_content/slider_totalmars.jpg" width="275" style="padding:0px" align="center">\
+      overlay.setPosition(coordinate);
     }
   } else {
     if (currentFeature) {
@@ -1395,7 +1453,7 @@ map.on('pointermove', function (event) {
     tooltip.style.display = 'none';
     return;
   }
-  displayFeatureInfo(map.getEventPixel(event.originalEvent));
+  displayFeatureInfo(event, map.getEventPixel(event.originalEvent));
 });
 var currentFeature;
 var returnToMap = function() {
@@ -1444,6 +1502,21 @@ var mapbutton = document.getElementById('mapbutton');
 mapbutton.parentElement.onclick=function() {
   returnToMap();
 };
+
+
+//Overlay Event
+/**
+* Add a click handler to the map to render the popup.
+*/
+map.on('click', function (evt) {
+  const coordinate = evt.coordinate;
+  const hdms = toStringHDMS(toLonLat(coordinate));
+
+  content.innerHTML = '<p>You clicked here:</p><code>' + hdms + '</code>';
+  overlay.setPosition(coordinate);
+});
+
+
 
 // ---------------------------------------------------------------------------------
 // Functionality: Cycle through a set/group of layers <- NOT YET WORKING !

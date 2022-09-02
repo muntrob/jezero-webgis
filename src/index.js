@@ -33,6 +33,8 @@ import Overlay from 'ol/Overlay';
 import {toLonLat} from 'ol/proj';
 import {toStringHDMS} from 'ol/coordinate';
 
+import dateformat from 'dateformat';
+
 //import * as THREE from 'three';
 //import * as PANOLENS from 'panolens';
 import  AFRAME from 'aframe';
@@ -1380,6 +1382,30 @@ var styleFeatureBig = new Style({
     })
   });
 var mapdiv = document.getElementById('map');
+
+function tableCreate() {
+  var body = document.getElementsByTagName('body')[0];
+  var tbl = document.createElement('table');
+  tbl.style.width = '100%';
+  tbl.setAttribute('border', '1');
+  var tbdy = document.createElement('tbody');
+  for (var i = 0; i < 3; i++) {
+    var tr = document.createElement('tr');
+    for (var j = 0; j < 2; j++) {
+      if (i == 2 && j == 1) {
+        break
+      } else {
+        var td = document.createElement('td');
+        td.appendChild(document.createTextNode('\u0020'))
+        i == 1 && j == 1 ? td.setAttribute('rowSpan', '2') : null;
+        tr.appendChild(td)
+      }
+    }
+    tbdy.appendChild(tr);
+  }
+  tbl.appendChild(tbdy);
+  content.appendChild(tbl);
+}
 //var currentFeature = new Feature();
 var displayFeatureInfo = function (evt, pixel) {
   tooltip.style.left = pixel[0] + 'px';
@@ -1436,6 +1462,152 @@ var displayFeatureInfo = function (evt, pixel) {
       <br><br><tr><td>Link: </td><td><a href="' + feature.get('URL_PR') + '">Download</a></td></tr>';
       // Image example link: <img src="https://www.geo.fu-berlin.de/geol/fachrichtungen/planet/press/archiv2019/2019_total_mars/_content/slider_totalmars.jpg" width="275" style="padding:0px" align="center">
       //<img src="https://www.geo.fu-berlin.de/geol/fachrichtungen/planet/press/archiv' + feature.get('Year') + '/' + feature.get('Year') + '_total_mars/_content/slider_totalmars.jpg" width="275" style="padding:0px" align="center">\
+      
+      var h1_popup = document.createElement('H3');
+      h1_popup.appendChild(document.createTextNode(feature.get('Name')));
+      content.appendChild(h1_popup);
+       
+      var p_popup = document.createElement('p');
+      //const dateformat = require('dateformat');
+      var d = new Date(feature.get('PR_Date'));
+      //var dstring = dateformat(d, 'dddd, mmmm dS, yyyy, h:MM:ss TT');
+      var dstring = dateformat(d, 'mmmm dd, yyyy');
+      var popup_date = document.createTextNode(dstring);
+//      p_popup.appendChild(document.createTextNode(d.toString('mmmm dd, yyyy')));
+//      p_popup.appendChild(document.createTextNode(d));
+//      p_popup.appendChild(document.createTextNode(d.getMonth() + " " + d.getDay() + ", " + d.getFullYear()));
+      var popup_span = document.createElement('span');
+      popup_span.style.fontWeight = 'bold';
+      popup_span.appendChild(popup_date);
+
+//      p_popup.appendChild(popup_date);
+      p_popup.appendChild(popup_span);
+      p_popup.appendChild(document.createTextNode('\t'));
+      p_popup.appendChild(document.createTextNode(feature.get('Titel')));
+      
+
+      content.appendChild(p_popup);
+
+
+      var tbl = document.createElement('table');
+	    tbl.style.width = '100%';
+        //tbl.setAttribute('border', '1');
+	    var tbdy = document.createElement('tbody');
+	    //var th = document.createElement('th');
+	    //th.appendChild(document.createTextNode(wanted['file_name']+' '+props['productid']));
+	    var gray=false;
+	    var type=null;
+
+      var tr = document.createElement('tr');
+      var th = document.createElement('th');
+			var td = document.createElement('td');
+        
+      
+
+			th.setAttribute('colSpan', '2');
+			th.style.fontWeight = 'bold';
+			th.style.paddingBottom = '2pt';
+			th.style.paddingTop = '5pt';
+			th.style.backgroundColor='#CCC';
+			th.appendChild(document.createTextNode('wanted[key]'+': '+'props[key]'));
+			tr.appendChild(th);
+//      td.appendChild(document.createTextNode('wanted[key]'+':'));
+      //(1)
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode('FN_3D: '));
+			td.style.fontWeight = 'bold';
+      tbdy.appendChild(tr);
+      var tr = document.createElement('tr');
+      tr.appendChild(td);
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode(feature.get('FN_3D')));
+      tr.appendChild(td);
+      tbdy.appendChild(tr);
+      //(2)
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode('FN_CO: '));
+			td.style.fontWeight = 'bold';
+      tbdy.appendChild(tr);
+      var tr = document.createElement('tr');
+      tr.appendChild(td);
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode(feature.get('FN_CO')));
+      tr.appendChild(td);
+      tbdy.appendChild(tr);
+      //(3)
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode('FN_3D2: '));
+			td.style.fontWeight = 'bold';
+      tbdy.appendChild(tr);
+      var tr = document.createElement('tr');
+      tr.appendChild(td);
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode(feature.get('FN_3D2')));
+      tr.appendChild(td);
+      tbdy.appendChild(tr);
+      //(4)
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode('FN_AN: '));
+			td.style.fontWeight = 'bold';
+      tbdy.appendChild(tr);
+      var tr = document.createElement('tr');
+      tr.appendChild(td);
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode(feature.get('FN_AN')));
+      tr.appendChild(td);
+      tbdy.appendChild(tr);
+      //(5)
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode('FN_HT: '));
+			td.style.fontWeight = 'bold';
+      tbdy.appendChild(tr);
+      var tr = document.createElement('tr');
+      tr.appendChild(td);
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode(feature.get('FN_HT')));
+      tr.appendChild(td);
+      tbdy.appendChild(tr);
+      //(6)
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode('FN_TXT: '));
+			td.style.fontWeight = 'bold';
+      tbdy.appendChild(tr);
+      var tr = document.createElement('tr');
+      tr.appendChild(td);
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode(feature.get('FN_TXT')));
+      tr.appendChild(td);
+      tbdy.appendChild(tr);
+      //(7)
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode('FN_CTX: '));
+			td.style.fontWeight = 'bold';
+      tbdy.appendChild(tr);
+      var tr = document.createElement('tr');
+      tr.appendChild(td);
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode(feature.get('FN_CTX')));
+      tr.appendChild(td);
+      tbdy.appendChild(tr);
+      
+//      //tr.clear;
+//      td.appendChild(document.createTextNode('FN_3D'));
+//      tr.appendChild(td);
+//      td.appendChild(document.createTextNode(feature.get('FN_3D')));
+//      tr.appendChild(td);
+//      tbdy.appendChild(tr);
+
+
+//      tbdy.appendChild(tr);
+      tbl.appendChild(tbdy);
+
+      
+      
+      content.appendChild(tbl);
+
+      
+      tableCreate();
+
       overlay.setPosition(coordinate);
     }
   } else {

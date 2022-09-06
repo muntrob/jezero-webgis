@@ -579,7 +579,8 @@ var addPRTarget=function(feature){
 
 
 // const data = require('./data.json');
-const data = require('../assets/pr_targets.json');
+// const data = require('../assets/pr_targets.json');
+const data = require('../assets/pr_targets_02.json');
 var geojsonObject = data;
 
 var test_lay = new Vector({
@@ -595,7 +596,8 @@ var features = new GeoJSON().readFeatures(geojsonObject);
 test_lay.getSource().addFeatures(features);
 
 var pr_targets_source = new VectorSource({
-  features: new GeoJSON().readFeatures(pr_featuresAsText)
+//  features: new GeoJSON().readFeatures(pr_featuresAsText)
+  features: new GeoJSON().readFeatures(geojsonObject)
 }); 
 //pr_targets_source.forEachFeature(addPano);
 pr_targets_source.forEachFeature(addPRTarget);
@@ -1524,7 +1526,8 @@ var displayFeatureInfo = function (evt, pixel) {
       // <img src="https://www.geo.fu-berlin.de/geol/fachrichtungen/planet/press/archiv2019/2019_total_mars/_content/slider_totalmars.jpg" width="275" style="padding:0px" align="center">\
       // <br><br><tr><td>Link: </td><td><a href="' + feature.get('URL_PR') + '">Download</a></td></tr>';
       var popup_preview_img = document.createElement('img');
-      popup_preview_img.setAttribute('src', 'https://www.geo.fu-berlin.de/geol/fachrichtungen/planet/press/archiv2019/2019_total_mars/_content/slider_totalmars.jpg');
+      // popup_preview_img.setAttribute('src', 'https://www.geo.fu-berlin.de/geol/fachrichtungen/planet/press/archiv2019/2019_total_mars/_content/slider_totalmars.jpg');
+      popup_preview_img.setAttribute('src', 'https://maps.planet.fu-berlin.de/pr/' + feature.get('Preview_Im'));
       popup_preview_img.setAttribute('width', '100%');
       //popup_preview_img.setAttribute('width', '275');
       popup_preview_img.setAttribute('align', 'center');

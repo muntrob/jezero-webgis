@@ -577,6 +577,23 @@ var addPRTarget=function(feature){
 ///   return xyz;
 /// }
 
+
+// const data = require('./data.json');
+const data = require('../assets/pr_targets.json');
+var geojsonObject = data;
+
+var test_lay = new Vector({
+  title: 'Test', // 'title' parameter is necessary to be able to make the layer (in-)visible
+//  visible: false,
+  source: new VectorSource({
+    wrapX: false
+  })
+});
+
+// var features = new GeoJSON().readFeatures(json);
+var features = new GeoJSON().readFeatures(geojsonObject);
+test_lay.getSource().addFeatures(features);
+
 var pr_targets_source = new VectorSource({
   features: new GeoJSON().readFeatures(pr_featuresAsText)
 }); 
@@ -1101,6 +1118,7 @@ const map = new Map({
 
     pr_targets_lay,
 
+    test_lay,
 
     
 //    new TileLayer ({
@@ -1574,7 +1592,7 @@ var displayFeatureInfo = function (evt, pixel) {
 //      td.appendChild(document.createTextNode('wanted[key]'+':'));
       //(1)
       var td = document.createElement('td');
-      td.appendChild(document.createTextNode('FN_3D: '));
+      td.appendChild(document.createTextNode('3D: '));
 			td.style.fontWeight = 'bold';
       tbdy.appendChild(tr);
       var tr = document.createElement('tr');
@@ -1585,7 +1603,7 @@ var displayFeatureInfo = function (evt, pixel) {
       tbdy.appendChild(tr);
       //(2)
       var td = document.createElement('td');
-      td.appendChild(document.createTextNode('FN_CO: '));
+      td.appendChild(document.createTextNode('CO: '));
 			td.style.fontWeight = 'bold';
       tbdy.appendChild(tr);
       var tr = document.createElement('tr');
@@ -1596,7 +1614,7 @@ var displayFeatureInfo = function (evt, pixel) {
       tbdy.appendChild(tr);
       //(3)
       var td = document.createElement('td');
-      td.appendChild(document.createTextNode('FN_3D2: '));
+      td.appendChild(document.createTextNode('3D2: '));
 			td.style.fontWeight = 'bold';
       tbdy.appendChild(tr);
       var tr = document.createElement('tr');
@@ -1607,7 +1625,7 @@ var displayFeatureInfo = function (evt, pixel) {
       tbdy.appendChild(tr);
       //(4)
       var td = document.createElement('td');
-      td.appendChild(document.createTextNode('FN_AN: '));
+      td.appendChild(document.createTextNode('AN: '));
 			td.style.fontWeight = 'bold';
       tbdy.appendChild(tr);
       var tr = document.createElement('tr');
@@ -1618,7 +1636,7 @@ var displayFeatureInfo = function (evt, pixel) {
       tbdy.appendChild(tr);
       //(5)
       var td = document.createElement('td');
-      td.appendChild(document.createTextNode('FN_HT: '));
+      td.appendChild(document.createTextNode('HT: '));
 			td.style.fontWeight = 'bold';
       tbdy.appendChild(tr);
       var tr = document.createElement('tr');
@@ -1629,7 +1647,7 @@ var displayFeatureInfo = function (evt, pixel) {
       tbdy.appendChild(tr);
       //(6)
       var td = document.createElement('td');
-      td.appendChild(document.createTextNode('FN_TXT: '));
+      td.appendChild(document.createTextNode('TXT: '));
 			td.style.fontWeight = 'bold';
       tbdy.appendChild(tr);
       var tr = document.createElement('tr');
@@ -1640,7 +1658,7 @@ var displayFeatureInfo = function (evt, pixel) {
       tbdy.appendChild(tr);
       //(7)
       var td = document.createElement('td');
-      td.appendChild(document.createTextNode('FN_CTX: '));
+      td.appendChild(document.createTextNode('CTX: '));
 			td.style.fontWeight = 'bold';
       tbdy.appendChild(tr);
       var tr = document.createElement('tr');

@@ -1583,7 +1583,8 @@ var displayFeatureInfo = function (evt, pixel) {
         
       
 
-			th.setAttribute('colSpan', '2');
+			// th.setAttribute('colSpan', '2');
+      th.setAttribute('colSpan', '7');
 			//th.style.fontWeight = 'bold';
       th.style.fontWeight = '800';
 			th.style.paddingBottom = '5pt';
@@ -1593,82 +1594,141 @@ var displayFeatureInfo = function (evt, pixel) {
 			th.appendChild(document.createTextNode('Products'));
 			tr.appendChild(th);
 //      td.appendChild(document.createTextNode('wanted[key]'+':'));
+      tbdy.appendChild(tr);
+      
+      var td_style = new Style({
+        text: new Text({
+          borderRadius: '10px',
+          backgroundColor: 'rgba(6,147,2,1)',
+          color: 'rgb(255,255,255)',
+          textAlign: 'center',
+          padding: '10pt',
+          fontWeight: 'bold'
+        })
+      });
       //(1)
       var td = document.createElement('td');
-      td.appendChild(document.createTextNode('3D: '));
+      td.style.borderRadius = '10px';
+      td.style.backgroundColor = 'rgba(6,147,2,1)';
+      td.style.color = 'rgb(255,255,255)';
+      td.style.textAlign = 'center';
+      td.style.padding = '10pt';
 			td.style.fontWeight = 'bold';
-      tbdy.appendChild(tr);
+      td.appendChild(document.createTextNode('3D'));
+      // tbdy.appendChild(tr);
       var tr = document.createElement('tr');
       tr.appendChild(td);
-      var td = document.createElement('td');
-      td.appendChild(document.createTextNode(feature.get('FN_3D')));
-      tr.appendChild(td);
-      tbdy.appendChild(tr);
+      // var td = document.createElement('td');
+      // td.appendChild(document.createTextNode(feature.get('FN_3D')));
+      // tr.appendChild(td);
+      // tbdy.appendChild(tr);
+      
       //(2)
       var td = document.createElement('td');
-      td.appendChild(document.createTextNode('CO: '));
+      td.style.borderRadius = '10px';
+      td.style.backgroundColor = 'rgba(6,147,2,1)';
+      td.style.color = 'rgb(255,255,255)';
+      td.style.textAlign = 'center';
+      td.style.padding = '10pt';
 			td.style.fontWeight = 'bold';
-      tbdy.appendChild(tr);
-      var tr = document.createElement('tr');
+      td.appendChild(document.createTextNode('CO'));
+			td.style.fontWeight = 'bold';
+      // tbdy.appendChild(tr);
+      // var tr = document.createElement('tr');
       tr.appendChild(td);
-      var td = document.createElement('td');
-      td.appendChild(document.createTextNode(feature.get('FN_CO')));
-      tr.appendChild(td);
-      tbdy.appendChild(tr);
+      // var td = document.createElement('td');
+      // td.appendChild(document.createTextNode(feature.get('FN_CO')));
+      // tr.appendChild(td);
+      // tbdy.appendChild(tr);
+      
       //(3)
       var td = document.createElement('td');
-      td.appendChild(document.createTextNode('3D2: '));
+      td.style.borderRadius = '10px';
+      td.style.backgroundColor = 'rgba(6,147,2,1)';
+      td.style.color = 'rgb(255,255,255)';
+      td.style.textAlign = 'center';
+      td.style.padding = '10pt';
 			td.style.fontWeight = 'bold';
-      tbdy.appendChild(tr);
-      var tr = document.createElement('tr');
+      td.appendChild(document.createTextNode('3D2'));
+			td.style.fontWeight = 'bold';
+      // tbdy.appendChild(tr);
+      // var tr = document.createElement('tr');
       tr.appendChild(td);
-      var td = document.createElement('td');
-      td.appendChild(document.createTextNode(feature.get('FN_3D2')));
-      tr.appendChild(td);
-      tbdy.appendChild(tr);
+      // var td = document.createElement('td');
+      // td.appendChild(document.createTextNode(feature.get('FN_3D2')));
+      // tr.appendChild(td);
+      // tbdy.appendChild(tr);
+      
       //(4)
       var td = document.createElement('td');
-      td.appendChild(document.createTextNode('AN: '));
+      td.style.borderRadius = '10px';
+      td.style.backgroundColor = 'rgba(6,147,2,1)';
+      td.style.color = 'rgb(255,255,255)';
+      td.style.textAlign = 'center';
+      td.style.padding = '10pt';
 			td.style.fontWeight = 'bold';
-      tbdy.appendChild(tr);
-      var tr = document.createElement('tr');
+      td.appendChild(document.createTextNode('AN'));
+			td.style.fontWeight = 'bold';
+      // tbdy.appendChild(tr);
+      // var tr = document.createElement('tr');
       tr.appendChild(td);
-      var td = document.createElement('td');
-      td.appendChild(document.createTextNode(feature.get('FN_AN')));
-      tr.appendChild(td);
-      tbdy.appendChild(tr);
+      // var td = document.createElement('td');
+      // td.appendChild(document.createTextNode(feature.get('FN_AN')));
+      // tr.appendChild(td);
+      // tbdy.appendChild(tr);
+      
       //(5)
       var td = document.createElement('td');
-      td.appendChild(document.createTextNode('HT: '));
+      td.style.borderRadius = '10px';
+      td.style.backgroundColor = 'rgba(6,147,2,1)';
+      td.style.color = 'rgb(255,255,255)';
+      td.style.textAlign = 'center';
+      td.style.padding = '10pt';
 			td.style.fontWeight = 'bold';
-      tbdy.appendChild(tr);
-      var tr = document.createElement('tr');
+      td.appendChild(document.createTextNode('HT'));
+			td.style.fontWeight = 'bold';
+      // tbdy.appendChild(tr);
+      // var tr = document.createElement('tr');
       tr.appendChild(td);
-      var td = document.createElement('td');
-      td.appendChild(document.createTextNode(feature.get('FN_HT')));
-      tr.appendChild(td);
-      tbdy.appendChild(tr);
+      // var td = document.createElement('td');
+      // td.appendChild(document.createTextNode(feature.get('FN_HT')));
+      // tr.appendChild(td);
+      // tbdy.appendChild(tr);
+      
       //(6)
       var td = document.createElement('td');
-      td.appendChild(document.createTextNode('TXT: '));
+      td.style.borderRadius = '10px';
+      td.style.backgroundColor = 'rgba(6,147,2,1)';
+      td.style.color = 'rgb(255,255,255)';
+      td.style.textAlign = 'center';
+      td.style.padding = '10pt';
 			td.style.fontWeight = 'bold';
-      tbdy.appendChild(tr);
-      var tr = document.createElement('tr');
+      td.appendChild(document.createTextNode('TXT'));
+			td.style.fontWeight = 'bold';
+      // tbdy.appendChild(tr);
+      // var tr = document.createElement('tr');
       tr.appendChild(td);
-      var td = document.createElement('td');
-      td.appendChild(document.createTextNode(feature.get('FN_TXT')));
-      tr.appendChild(td);
-      tbdy.appendChild(tr);
+      // var td = document.createElement('td');
+      // td.appendChild(document.createTextNode(feature.get('FN_TXT')));
+      // tr.appendChild(td);
+      // tbdy.appendChild(tr);
+      
       //(7)
       var td = document.createElement('td');
-      td.appendChild(document.createTextNode('CTX: '));
+      td.style.borderRadius = '10px';
+      td.style.backgroundColor = 'rgba(6,147,2,1)';
+      td.style.color = 'rgb(255,255,255)';
+      td.style.textAlign = 'center';
+      td.style.padding = '10pt';
 			td.style.fontWeight = 'bold';
-      tbdy.appendChild(tr);
-      var tr = document.createElement('tr');
+      td.appendChild(document.createTextNode('CTX'));
+			td.style.fontWeight = 'bold';
+      // tbdy.appendChild(tr);
+      // var tr = document.createElement('tr');
       tr.appendChild(td);
-      var td = document.createElement('td');
-      td.appendChild(document.createTextNode(feature.get('FN_CTX')));
-      tr.appendChild(td);
+      // var td = document.createElement('td');
+      // td.appendChild(document.createTextNode(feature.get('FN_CTX')));
+      // tr.appendChild(td);
       tbdy.appendChild(tr);
       
 //      //tr.clear;

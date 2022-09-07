@@ -1556,7 +1556,7 @@ var displayFeatureInfo = function (evt, pixel) {
       
       // Description long
       var p_popup = document.createElement('p');
-      var decription_long_txt = feature.get('Titel');
+      var decription_long_txt = feature.get('Desc_Long');
       var popup_description_long = document.createTextNode(decription_long_txt);
 //      p_popup.appendChild(document.createTextNode(d.toString('mmmm dd, yyyy')));
 //      p_popup.appendChild(document.createTextNode(d));
@@ -1695,23 +1695,24 @@ var displayFeatureInfo = function (evt, pixel) {
       // tr.appendChild(td);
       // tbdy.appendChild(tr);
       
-      //(6)
-      var td = document.createElement('td');
-      td.style.borderRadius = '10px';
-      td.style.backgroundColor = 'rgba(6,147,2,1)';
-      td.style.color = 'rgb(255,255,255)';
-      td.style.textAlign = 'center';
-      td.style.padding = '10pt';
-			td.style.fontWeight = 'bold';
-      td.appendChild(document.createTextNode('TXT'));
-			td.style.fontWeight = 'bold';
-      // tbdy.appendChild(tr);
-      // var tr = document.createElement('tr');
-      tr.appendChild(td);
+      // NOTE: This field is not holding a link to a PR product!
+      // //(6) 
       // var td = document.createElement('td');
-      // td.appendChild(document.createTextNode(feature.get('FN_TXT')));
+      // td.style.borderRadius = '10px';
+      // td.style.backgroundColor = 'rgba(6,147,2,1)';
+      // td.style.color = 'rgb(255,255,255)';
+      // td.style.textAlign = 'center';
+      // td.style.padding = '10pt';
+			// td.style.fontWeight = 'bold';
+      // td.appendChild(document.createTextNode('TXT'));
+			// td.style.fontWeight = 'bold';
+      // // tbdy.appendChild(tr);
+      // // var tr = document.createElement('tr');
       // tr.appendChild(td);
-      // tbdy.appendChild(tr);
+      // // var td = document.createElement('td');
+      // // td.appendChild(document.createTextNode(feature.get('FN_TXT')));
+      // // tr.appendChild(td);
+      // // tbdy.appendChild(tr);
       
       //(7)
       var td = document.createElement('td');

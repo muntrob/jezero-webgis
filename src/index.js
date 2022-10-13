@@ -2170,7 +2170,7 @@ $("#slider").roundSlider({
 });
 
 var roundSlider = $("#slider");
-$("#slider").on("drag", function(e) {
+$("#slider").on("drag change", function(e) {
   startYear = e.value.split(",")[0];
   stopYear = e.value.split(",")[1];
   // $("#sliderValMin").text(e.value.split(",")[0]);

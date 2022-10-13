@@ -21,11 +21,15 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.2",
     "aframe": "^1.2.0",
+    "bootstrap": "^5.2.2",
+    "bootstrap-slider": "^11.0.2",
     "dateformat": "^5.0.3",
+    "jquery": "^3.6.1",
     "ol": "^6.5.0",
     "ol-layerswitcher": "^3.8.3",
     "panolens": "^0.11.0",
     "proj4": "^2.7.0",
+    "round-slider": "^1.6.1",
     "sidebar-v2": "git+https://github.com/Turbo87/sidebar-v2.git",
     "three": "^0.125.2"
   },

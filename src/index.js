@@ -51,6 +51,8 @@ import {
 } from "ol/format/filter";
 
 
+var startYear="2006";
+var stopYear="2020";
 
 var textarray=[];
 
@@ -167,7 +169,8 @@ var projection49911 = new Projection({
   global: true,
   units: 'm',
   //extent: [4000000, 0, 4500000, 500000],
-  extent: [-10668848.652, -5215881.563, 10668848.652, 5215881.563],
+  // extent: [-10668848.652, -5215881.563, 10668848.652, 5215881.563],
+  extent: [-92160000000000, -46080000000000, 92160000000000, 46080000000000],
   ////extent: [-10668848.652, -5215881.563, 10668848.652, 5215881.563],
   //extent: [4536590.000, 1013775.000, 4683160.000, 1180560.000],
   //extent: [4363662.941221565, 859975.4272094945, 4808874.452132847, 1296750.544287833],
@@ -938,8 +941,12 @@ var initHrsc4a = function(){
           // The filter seems to work also for timestamps without the letters 'T' and 'Z' in the string:
 //          lessThanOrEqualToFilter('stop_time', '2005-01-01 00:00:00.000'),
 //          greaterThanOrEqualToFilter('start_time', '1996-01-01 00:00:00.000'),
-          lessThanOrEqualToFilter('stop_time', '2005-01-01T00:00:00.000Z'),
-          greaterThanOrEqualToFilter('start_time', '1996-01-01T00:00:00.000Z'),
+          // lessThanOrEqualToFilter('stop_time', '2005-01-01T00:00:00.000Z'),
+          // greaterThanOrEqualToFilter('start_time', '1996-01-01T00:00:00.000Z'),
+          // lessThanOrEqualToFilter('stop_time', document.getElementById("sliderTest").value + '-01-01T00:00:00.000Z'),
+          // greaterThanOrEqualToFilter('start_time', '1996-01-01T00:00:00.000Z'),
+          lessThanOrEqualToFilter('stop_time', stopYear + '-01-01T00:00:00.000Z'),
+          greaterThanOrEqualToFilter('start_time', startYear + '-01-01T00:00:00.000Z'),
         ),
     });
 //    fetch('https://'+app.ogchost+app.cgi, {
@@ -981,30 +988,30 @@ var refreshLevel4a = function() {
     	}
     	var minltst=new Date('1970-01-01T'+feature.getProperties().minltst+'Z');
     	var maxltst=new Date('1970-01-01T'+feature.getProperties().maxltst+'Z');
-    	if ((app.selMaxRes != app.maxRes) && (scale > app.selMaxRes)) {
-			return null;
-    	}
-    	if ((app.selMinRes != app.minRes) && (scale < app.selMinRes)) {
-			return null;
-    	}
-    	if ((app.selMaxLs != app.maxLs) && (ls > app.selMaxLs)) {
-			return null;
-    	}
-    	if ((app.selMinLs != app.minLs) && (ls < app.selMinLs)) {
-			return null;
-    	}
-    	if ((stoptime < app.startTime ) || (starttime > app.stopTime)) {
-    		return null;
-    	}
-    	if ((maxltst < app.startLocalTime ) || (minltst > app.stopLocalTime)) {
-    		return null;
-    	}
-    	if ((inci[1] < app.inci[0] ) || ( inci[0] > app.inci[1] && app.inci[1] != app.timePanel.inciSlider.getAttribute('max') ) ) {
-    		return null;
-    	}
-    	if (inci[0]>inciMin) {
-    		inciMin=inci[0];
-    	}
+    	// if ((app.selMaxRes != app.maxRes) && (scale > app.selMaxRes)) {
+			// return null;
+    	// }
+    	// if ((app.selMinRes != app.minRes) && (scale < app.selMinRes)) {
+			// return null;
+    	// }
+    	// if ((app.selMaxLs != app.maxLs) && (ls > app.selMaxLs)) {
+			// return null;
+    	// }
+    	// if ((app.selMinLs != app.minLs) && (ls < app.selMinLs)) {
+			// return null;
+    	// }
+    	// if ((stoptime < app.startTime ) || (starttime > app.stopTime)) {
+    	// 	return null;
+    	// }
+    	// if ((maxltst < app.startLocalTime ) || (minltst > app.stopLocalTime)) {
+    	// 	return null;
+    	// }
+    	// if ((inci[1] < app.inci[0] ) || ( inci[0] > app.inci[1] && app.inci[1] != app.timePanel.inciSlider.getAttribute('max') ) ) {
+    	// 	return null;
+    	// }
+    	// if (inci[0]>inciMin) {
+    	// 	inciMin=inci[0];
+    	// }
     	hrsc4aNdWfs.getSource().addFeature(feature);
     });
     console.dir(hrsc4aNdWfs.getSource().getFeatures().length + ' HRSC4a sequences loaded.');
@@ -2127,4 +2134,48 @@ AFRAME.registerComponent('rotation-reader', {
       // position and rotation now contain vector and quaternion in world space.
     };
   })()
+});
+
+// Slider control: Set one value for the year in the stopDate string
+var sliderTest = document.getElementById("sliderTest");
+sliderTest.oninput=function() {
+  let sliderValue = sliderTest.value;
+  document.getElementById("sliderVal").innerText = sliderValue;
+  document.getElementById("rangeValue").innerText = sliderValue;
+  
+  // Reload the WFS layer with the changed filter value
+  initHrsc4a();
+
+  console.log(sliderValue);
+};
+
+
+
+// $("#slider").roundSlider({
+//   radius: 85,
+//   sliderType: "range",
+//   value: "7,50"
+// });
+
+$("#slider").roundSlider({
+  sliderType: "range",
+  handleShape: "round",
+  value: "2006,2020",
+  width: 13,
+  handleSize: "+10",
+  radius: 80,
+  max: "2022",
+  min: "2004",
+  mouseScrollAction: true
+});
+
+var roundSlider = $("#slider");
+$("#slider").on("drag", function(e) {
+  startYear = e.value.split(",")[0];
+  stopYear = e.value.split(",")[1];
+  // $("#sliderValMin").text(e.value.split(",")[0]);
+  // $("#sliderValMax").text(e.value.split(",")[1]);
+  $("#sliderValMin").text(startYear);
+  $("#sliderValMax").text(stopYear);
+  initHrsc4a();
 });

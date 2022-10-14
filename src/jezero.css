@@ -71,8 +71,13 @@ padding-left: 2.7em;
 }
 
 .ol-mouse-position {
-    top: auto;
-    bottom: 8px;
+  top: auto;
+  bottom: 8px;
+  background-color: rgba(0,0,0, 0.5);
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  font-size:x-small;
 }
 .ol-control button {
   background-color: rgba(0,0,0, 0.5);
@@ -246,18 +251,20 @@ p.imagecredits {
 }
 
 
-
-.ol-popup {
-  position: absolute;
-  background-color: white;
+.olpopup {
+/* .ol-popup { */
+  /* position: absolute; */
+  /* background-color: white; */
+  background-color: rgba(124, 124, 124, 0.9);
   /* box-shadow: 0 1px 4px rgba(0,0,0,0.2); */
   box-shadow: 5px 5px 5px rgba(0,0,0,0.2);
   padding: 15px;
-  /* border-radius: 10px; */
+  border-radius: 10px;
   border: 1px solid #cccccc;
   bottom: 12px;
   left: -50px;
   min-width: 350px;
+  color: white;
 }
 .ol-popup:after, .ol-popup:before {
   top: 100%;
@@ -288,6 +295,46 @@ p.imagecredits {
 }
 .ol-popup-closer:after {
   content: "✖";
+}
+
+.ol-popup-content {
+  color: white;
+}
+
+
+.btn {
+  background-color: rgba(0, 0, 0, 0);
+  border: none;
+  color: white;
+  padding: 7px 7px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.popup-product-btns-active {
+  border-radius: 10px;
+  background-color: rgb(0, 99, 212);
+  color: rgb(255,255,255);
+  text-align: center;
+  padding: 10px;
+	font-weight: bold;
+}
+.popup-product-btns-active:hover {
+  border-radius: 10px;
+  background-color: rgb(87, 154, 255);
+  color: rgb(255,255,255);
+  text-align: center;
+  padding: 10px;
+	font-weight: bold;
+}
+
+.popup-product-btns-inactive {
+  border-radius: 10px;
+  background-color: rgb(173, 173, 173);
+  color: rgb(87, 87, 87);
+  text-align: center;
+  padding: 10px;
+	font-weight: bold;
 }
 
 

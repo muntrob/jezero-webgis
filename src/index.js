@@ -923,6 +923,30 @@ var displayFeatureInfo = function (evt, pixel) {
   }
 };
 
+const delay = function (milliseconds){
+  return new Promise(resolve => {
+      setTimeout(resolve, milliseconds);
+  });
+}
+
+// const cycleLayers = async function (layer) {
+const cycleLayers = async function() {
+  var layers = dynlyrgrp.getLayers().getArray();
+  for (var i = 0; i < layers.length; i++) {
+    layer = layers[i];
+    // cycleLayers(layer);
+    layer.setVisible(true);
+    await delay(1000);
+    layer.setVisible(false);
+  }
+};
+// document.getElementById("cyclelyrsbtn").on("click", cycleLayers());
+var cyclelyrsbtn = document.getElementById("cyclelyrsbtn");
+cyclelyrsbtn.onclick = function() {
+  cycleLayers();
+};
+
+
 // Events
 map.on('click', function (event) {
   if (event.dragging) {
@@ -980,7 +1004,7 @@ map.on('click', function (e) {
     var tmpTile = new TileLayer({
       title: wfsProductid,
       opacity: 1,
-      visible: true,
+      visible: false,
       source: new TileWMS({
         url: "https://maps.planet.fu-berlin.de/eqc/wms?",
         params: { 
@@ -992,9 +1016,19 @@ map.on('click', function (e) {
       })
     });
     //TODO: Check if layer with this name already exists and just update its content, not add a new one
-    //if (dynlyrgrp.getLayers().title != )
-    dynlyrgrp.getLayers().insertAt(0,tmpTile);
-    //dynlyrgrp.push(tmpTile);
+    var lays = dynlyrgrp.getLayers().getArray();
+
+    // Check if the dynamic layer group is empty
+    if (dynlyrgrp.getLayers().item(0))
+    {
+      // Check if layer with this 'title' already exists
+      if (lays.find(layer => layer.get('title') == tmpTile.get('title')) == undefined) {
+        dynlyrgrp.getLayers().insertAt(0,tmpTile);
+      }
+    } else {
+      dynlyrgrp.getLayers().insertAt(0,tmpTile);
+    }
+
     LayerSwitcher.renderPanel(map, toc, { reverse: true });
 
 

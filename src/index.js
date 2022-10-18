@@ -1016,13 +1016,13 @@ map.on('click', function (e) {
       })
     });
     //TODO: Check if layer with this name already exists and just update its content, not add a new one
-    var lays = dynlyrgrp.getLayers().getArray();
+    var dynlyrs = dynlyrgrp.getLayers().getArray();
 
     // Check if the dynamic layer group is empty
     if (dynlyrgrp.getLayers().item(0))
     {
       // Check if layer with this 'title' already exists
-      if (lays.find(layer => layer.get('title') == tmpTile.get('title')) == undefined) {
+      if (dynlyrs.find(layer => layer.get('title') == tmpTile.get('title')) == undefined) {
         dynlyrgrp.getLayers().insertAt(0,tmpTile);
       }
     } else {

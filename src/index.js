@@ -35,6 +35,8 @@ import {toStringHDMS} from 'ol/coordinate';
 
 import dateformat from 'dateformat';
 
+import { click } from "ol/events/condition";
+
 //import * as THREE from 'three';
 //import * as PANOLENS from 'panolens';
 import  AFRAME from 'aframe';
@@ -58,6 +60,9 @@ var mapdiv = document.getElementById('map');
 
 const product_types = ['3d', 'an', 'co', 'ctxt', 'ft', 'ht', 'nd'];
 const product_types_desc = ['Perspective View', 'Red-Cyan Anaglyph', 'RGB Color Image', 'Context Map', 'Annotated Image', 'Color-coded DTM (Digital Terrain Model) with Nadir', 'Nadir Image'];
+let wfsProductid = null;
+let wfsFilename = null;
+let wfsTarget = null;
 var currentFeature;
 var currentYear = new Date().getFullYear();
 var startYear="2006";
@@ -960,82 +965,6 @@ map.on('loadstart', function (event) {
   initHrsc4a();
 })
 
-
-
-// Source: Example - OL - Select Features by Hover
-// https://openlayers.org/en/latest/examples/select-hover-features.html
-const selectStyle = new Style({
-  fill: new Fill({
-    color: '#eeeeee',
-  }),
-  stroke: new Stroke({
-    color: 'rgba(255, 255, 255, 0.7)',
-    width: 2,
-  }),
-});
-
-const status = document.getElementById('status');
-
-let selected = null;
-let wfsProductid = null;
-let wfsFilename = null;
-let wfsTarget = null;
-
-map.on('click', function (e) {
-  if (selected !== null) {
-    selected.setStyle(undefined);
-    selected = null;
-  }
-
-  map.forEachFeatureAtPixel(e.pixel, function (f) {
-    selected = f;
-    selectStyle.getFill().setColor(f.get('COLOR') || '#eeeeee');
-    f.setStyle(selectStyle);
-    return true;
-  });
-
-  if (selected) {
-    wfsFilename = selected.get('file_name');
-    wfsProductid = selected.get('source_product_id');
-    wfsTarget = selected.get('target');
-
-    status.innerHTML = wfsProductid;
-    
-    var tmpTile = new TileLayer({
-      title: wfsProductid,
-      opacity: 1,
-      visible: false,
-      source: new TileWMS({
-        url: "https://maps.planet.fu-berlin.de/eqc/wms?",
-        params: { 
-          LAYERS: "hrsc4",
-          VERSION: '1.3.0',
-          TILED: true,
-          PRODUCTID: wfsProductid,
-        }
-      })
-    });
-    //TODO: Check if layer with this name already exists and just update its content, not add a new one
-    var dynlyrs = dynlyrgrp.getLayers().getArray();
-
-    // Check if the dynamic layer group is empty
-    if (dynlyrgrp.getLayers().item(0))
-    {
-      // Check if layer with this 'title' already exists
-      if (dynlyrs.find(layer => layer.get('title') == tmpTile.get('title')) == undefined) {
-        dynlyrgrp.getLayers().insertAt(0,tmpTile);
-      }
-    } else {
-      dynlyrgrp.getLayers().insertAt(0,tmpTile);
-    }
-
-    LayerSwitcher.renderPanel(map, toc, { reverse: true });
-
-
-  } else {
-    status.innerHTML = '&nbsp;';
-  }
-});
 //------------------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------------------
@@ -1074,4 +1003,109 @@ $("#slider").on("drag change", function(e) {
   $("#sliderValMax").text(stopYear);
   initHrsc4a();
 });
+//------------------------------------------------------------------------------------------
+
+
+
+//------------------------------------------------------------------------------------------
+// Source: https://stackoverflow.com/questions/73561732/openlayers-6-select-a-feature-and-change-its-style
+//------------------------------------------------------------------------------------------
+
+let select = null; // ref to currently selected interaction
+
+const selected = new Style({
+  fill: new Fill({
+    color: '#00c41a',
+  }),
+  stroke: new Stroke({
+    color: '#00c41a',
+    width: 2,
+  }),
+});
+
+var selectStyle = function (feature) {
+  const colorFill = feature.get('COLOR') || '#32ff4d2f';
+  const colorStroke = feature.get('COLOR') || '#006e0f'; //00c41a
+  selected.getFill().setColor(colorFill);
+  selected.getStroke().setColor(colorStroke);
+  return selected;
+}
+
+// select interaction working on "click"
+const selectClick = new Select({
+  condition: click,
+  style: selectStyle,
+});
+
+const changeInteraction = function () {
+  if (select !== null) {
+    map.removeInteraction(select);
+  }
+
+  select = selectClick;
+
+  if (select !== null) {
+    map.addInteraction(select);
+    select.on('select', function (e) {
+      e.selected.forEach((feature) => {
+        wfsFilename = feature.get('file_name');
+        wfsProductid = feature.get('source_product_id');
+        wfsTarget = feature.get('target');
+
+        // status.innerHTML = wfsProductid;
+        
+        var tmpTile = new TileLayer({
+          title: wfsProductid,
+          opacity: 1,
+          visible: false,
+          source: new TileWMS({
+            url: "https://maps.planet.fu-berlin.de/eqc/wms?",
+            params: { 
+              LAYERS: "hrsc4",
+              VERSION: '1.3.0',
+              TILED: true,
+              PRODUCTID: wfsProductid,
+            }
+          })
+        });
+        var dynlyrs = dynlyrgrp.getLayers().getArray();
+
+        dynlyrgrp.getLayers().insertAt(0,tmpTile);
+
+        dynlyrgrp.set('title', 'Dynamic layer group (' + e.target.getFeatures().getLength() + ')');
+
+        LayerSwitcher.renderPanel(map, toc, { reverse: true });
+      });
+
+      e.deselected.forEach((feature) => {
+        wfsProductid = feature.get('source_product_id');
+        
+        var dynlyrs = dynlyrgrp.getLayers().getArray();
+
+        dynlyrgrp.getLayers(dynlyrs.find(layer => layer.get('title') == wfsProductid)).pop();
+        
+        dynlyrgrp.set('title', 'Dynamic layer group (' + e.target.getFeatures().getLength() + ')');
+
+        LayerSwitcher.renderPanel(map, toc, { reverse: true });
+      });
+
+      document.getElementById('status').innerHTML =
+        '&nbsp;' +
+        '<br>' +
+        e.target.getFeatures().getLength() +
+        ' selected features <br>' + 
+        '(last operation <br>'
+        +'selected ' +
+        e.selected.length +
+        '<br>and <br>' +
+        'deselected ' +
+        e.deselected.length +
+        ' features' +
+        '<br>)';
+    });
+  }
+};
+
+changeInteraction();
+
 //------------------------------------------------------------------------------------------

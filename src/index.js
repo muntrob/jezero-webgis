@@ -454,6 +454,15 @@ var allHrsc4aNdWfs = new Vector({
   })
 });
 
+var hrsc4aNdWfsSelection = new Vector({
+  title: 'Selection', // 'title' parameter is necessary to be able to make the layer (in-)visible
+//  visible: false,
+  source: new VectorSource({
+    wrapX: false
+  }),
+  style: highlightStyle,
+});
+
 var initHrsc4a = function(){
 	allHrsc4aNdWfs.getSource().clear();
     var queryLayer='';
@@ -566,6 +575,21 @@ var downloadlyrsbtn = document.getElementById('downloadlyrsbtn');
 downloadlyrsbtn.onclick=function() {
   downloadlyrsfunc();
 };
+
+
+//Define selectlyrs button onclick action
+var selectlyrsbtn = document.getElementById('selectlyrsbtn');
+var selectlyrsbtn_clicked = false;
+
+selectlyrsbtn.onclick=function() {
+  if (selectlyrsbtn_clicked == false) {
+    selectlyrsbtn_clicked = true;
+    selectlyrsbtn.style.backgroundColor = "rgba(0,60,136,0.7)";
+  } else {
+    selectlyrsbtn_clicked = false;
+    selectlyrsbtn.style.backgroundColor = "#0074d9";
+  }
+};
 //------------------------------------------------------------------------------------------
 
 
@@ -663,8 +687,11 @@ const map = new Map({
     //   })
     // }),
 
+    hrsc4aNdWfsSelection,
+    // allHrsc4aNdWfs,
     hrsc4aNdWfs,
-    allHrsc4aNdWfs,
+    
+    
 
     dynlyrgrp,
   ],
@@ -1007,52 +1034,36 @@ $("#slider").on("drag change", function(e) {
 
 
 
-//------------------------------------------------------------------------------------------
-// Source: https://stackoverflow.com/questions/73561732/openlayers-6-select-a-feature-and-change-its-style
-//------------------------------------------------------------------------------------------
+// //------------------------------------------------------------------------------------------
+// // Source: https://openlayers.org/en/latest/examples/select-multiple-features.html
+// //------------------------------------------------------------------------------------------
 
-let select = null; // ref to currently selected interaction
-
-const selected = new Style({
+const highlightStyle = new Style({
   fill: new Fill({
-    color: '#00c41a',
+    // color: '#EEE',
+    color: '#32ff4d2f',
   }),
   stroke: new Stroke({
-    color: '#00c41a',
+    // color: '#3399CC',
+    color: '#006e0f',
     width: 2,
   }),
 });
 
-var selectStyle = function (feature) {
-  const colorFill = feature.get('COLOR') || '#32ff4d2f';
-  const colorStroke = feature.get('COLOR') || '#006e0f'; //00c41a
-  selected.getFill().setColor(colorFill);
-  selected.getStroke().setColor(colorStroke);
-  return selected;
-}
+const selected = [];
 
-// select interaction working on "click"
-const selectClick = new Select({
-  condition: click,
-  style: selectStyle,
-});
+const status = document.getElementById('status');
 
-const changeInteraction = function () {
-  if (select !== null) {
-    map.removeInteraction(select);
-  }
-
-  select = selectClick;
-
-  if (select !== null) {
-    map.addInteraction(select);
-    select.on('select', function (e) {
-      e.selected.forEach((feature) => {
-        wfsFilename = feature.get('file_name');
-        wfsProductid = feature.get('source_product_id');
-        wfsTarget = feature.get('target');
-
-        // status.innerHTML = wfsProductid;
+map.on('singleclick', function (e) {
+  if (selectlyrsbtn_clicked) {
+    map.forEachFeatureAtPixel(e.pixel, function (f) {
+      wfsProductid = f.get('source_product_id');
+      
+      const selIndex = selected.indexOf(f);
+      if (selIndex < 0) {
+        selected.push(f);
+        // f.setStyle(highlightStyle);
+  
         
         var tmpTile = new TileLayer({
           title: wfsProductid,
@@ -1068,44 +1079,38 @@ const changeInteraction = function () {
             }
           })
         });
-        var dynlyrs = dynlyrgrp.getLayers().getArray();
-
-        dynlyrgrp.getLayers().insertAt(0,tmpTile);
-
-        dynlyrgrp.set('title', 'Dynamic layer group (' + e.target.getFeatures().getLength() + ')');
-
-        LayerSwitcher.renderPanel(map, toc, { reverse: true });
-      });
-
-      e.deselected.forEach((feature) => {
-        wfsProductid = feature.get('source_product_id');
         
+        dynlyrgrp.getLayers().push(tmpTile);
+        dynlyrgrp.set('title', 'Dynamic layer group (' + selected.length + ')');
+  
+  
+        hrsc4aNdWfsSelection.getSource().clear();
+        hrsc4aNdWfsSelection.getSource().addFeatures(selected);
+      
+  
+        LayerSwitcher.renderPanel(map, toc, { reverse: true });
+      } else {
+        selected.splice(selIndex, 1);
+        // f.setStyle(undefined);
+  
+  
         var dynlyrs = dynlyrgrp.getLayers().getArray();
-
+    
         dynlyrgrp.getLayers(dynlyrs.find(layer => layer.get('title') == wfsProductid)).pop();
         
-        dynlyrgrp.set('title', 'Dynamic layer group (' + e.target.getFeatures().getLength() + ')');
-
+        dynlyrgrp.set('title', 'Dynamic layer group (' + selected.length + ')');
+  
+  
+        hrsc4aNdWfsSelection.getSource().clear();
+        hrsc4aNdWfsSelection.getSource().addFeatures(selected);
+      
+  
         LayerSwitcher.renderPanel(map, toc, { reverse: true });
-      });
-
-      document.getElementById('status').innerHTML =
-        '&nbsp;' +
-        '<br>' +
-        e.target.getFeatures().getLength() +
-        ' selected features <br>' + 
-        '(last operation <br>'
-        +'selected ' +
-        e.selected.length +
-        '<br>and <br>' +
-        'deselected ' +
-        e.deselected.length +
-        ' features' +
-        '<br>)';
+      }
     });
+  
+    status.innerHTML = '&nbsp;' + selected.length + ' selected features';
   }
-};
-
-changeInteraction();
+});
 
 //------------------------------------------------------------------------------------------

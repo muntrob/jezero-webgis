@@ -975,6 +975,8 @@ const cycleLayers = async function() {
 // document.getElementById("cyclelyrsbtn").on("click", cycleLayers());
 var cyclelyrsbtn = document.getElementById("cyclelyrsbtn");
 cyclelyrsbtn.onclick = function() {
+  dynlyrgrp.setVisible(true);
+  dynlyrgrp.getLayers().forEach(layer => layer.setVisible(false));
   cycleLayers();
 };
 

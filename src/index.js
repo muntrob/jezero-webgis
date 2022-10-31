@@ -963,13 +963,15 @@ const delay = function (milliseconds){
 
 // const cycleLayers = async function (layer) {
 const cycleLayers = async function() {
+  var cycleTime = document.getElementById("cycletime").value;
   var layers = dynlyrgrp.getLayers().getArray();
   for (var i = 0; i < layers.length; i++) {
     layer = layers[i];
     // cycleLayers(layer);
     layer.setVisible(true);
-    await delay(1000);
+    await delay(1000*cycleTime);
     layer.setVisible(false);
+    console.log(layer.get('title'));
   }
 };
 // document.getElementById("cyclelyrsbtn").on("click", cycleLayers());
@@ -1000,17 +1002,6 @@ map.on('loadstart', function (event) {
 // Controls outside the map object
 //------------------------------------------------------------------------------------------
 // Slider control: Set one value for the year in the stopDate string
-var sliderTest = document.getElementById("sliderTest");
-sliderTest.oninput=function() {
-  let sliderValue = sliderTest.value;
-  document.getElementById("sliderVal").innerText = sliderValue;
-  document.getElementById("rangeValue").innerText = sliderValue;
-  
-  // Reload the WFS layer with the changed filter value
-  initHrsc4a();
-
-  console.log(sliderValue);
-};
 
 $("#slider").roundSlider({
   sliderType: "range",
@@ -1024,7 +1015,6 @@ $("#slider").roundSlider({
   mouseScrollAction: true
 });
 
-var roundSlider = $("#slider");
 $("#slider").on("drag change", function(e) {
   startYear = e.value.split(",")[0];
   stopYear = e.value.split(",")[1];

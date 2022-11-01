@@ -542,13 +542,12 @@ var refreshLevel4a = function() {
 
 
 var remlyrsfunc = function() {
-  map.removeLayer(lay01);
-  map.removeLayer(lay02);
-  map.removeLayer(lay03);
-  map.removeLayer(lay04);
-  map.removeLayer(lay05);
-  map.removeLayer(lay06);
-  map.removeLayer(lay07);
+  // map.removeLayer(lay01);
+  
+  selected = [];
+  dynlyrgrp.set('title', 'Dynamic layer group (' + selected.length + ')');
+  dynlyrgrp.getLayers().clear();
+  hrsc4aNdWfsSelection.getSource().clear();
   LayerSwitcher.renderPanel(map, toc, { reverse: true });
 }
 //Define remlyrs button onclick action
@@ -687,9 +686,9 @@ const map = new Map({
     //   })
     // }),
 
-    hrsc4aNdWfsSelection,
     // allHrsc4aNdWfs,
     hrsc4aNdWfs,
+    hrsc4aNdWfsSelection,
     
     
 
@@ -1045,7 +1044,7 @@ const highlightStyle = new Style({
   }),
 });
 
-const selected = [];
+var selected = [];
 
 const status = document.getElementById('status');
 
@@ -1086,6 +1085,8 @@ map.on('singleclick', function (e) {
         LayerSwitcher.renderPanel(map, toc, { reverse: true });
       } else {
         selected.splice(selIndex, 1);
+        console.log(selected);
+        
         // f.setStyle(undefined);
   
   
@@ -1094,8 +1095,7 @@ map.on('singleclick', function (e) {
         dynlyrgrp.getLayers(dynlyrs.find(layer => layer.get('title') == wfsProductid)).pop();
         
         dynlyrgrp.set('title', 'Dynamic layer group (' + selected.length + ')');
-  
-  
+          
         hrsc4aNdWfsSelection.getSource().clear();
         hrsc4aNdWfsSelection.getSource().addFeatures(selected);
       

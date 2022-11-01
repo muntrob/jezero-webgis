@@ -165,20 +165,18 @@ padding-left: 2.7em;
   position: relative;
   top: 40px;
   margin: -10px -20px 0;
-  height: 40px;
+  height: auto;
   /*padding: 0 20px;*/
-  line-height: 40px;
+  line-height: auto;
   font-size: 14.4pt;
   color: #fff;
   background-color: #7a7a7a; }
 
 .message-pane-item {
+  display: flex;
   /*float:right;*/
-  /*margin: -10px -20px 0 0;*/
-  margin: 0 10px 0 0;
-  height: 40px;
-  /*padding: 0 20px;*/
-  padding: 0 10px;
+  margin: 10px;
+  padding: 10px;
   line-height: 40px;
   font-size: 12pt;
   color: #fff;
@@ -363,47 +361,96 @@ p.imagecredits {
 
 
 .slider-pane {
+  display: flex;
+  text-align: center;
   position: relative;
   top: 40px;
   margin: -10px -20px 0;
-  height: 40px;
+  /* padding-left: 20px; */
+  padding: 10px 20px 10px 20px;
+  height: auto;
   /*padding: 0 20px;*/
-  line-height: 40px;
+  /* line-height: 40px; */
+  line-height: auto;
   /* font-size: 14.4pt; */
   /* color: #fff; */
-  background-color: #7a7a7a; }
+  background-color: #7a7a7a; 
+}
 
 .slider-pane-item {
+  align-content: space-around;
+  display: flow;
   position: relative;
-  /*float:right;*/
-  /*margin: -10px -20px 0 0;*/
-  margin: 0 10px 0 0;
-  height: 40px;
-  /*padding: 0 20px;*/
-  padding: 0 10px;
-  line-height: 40px;
+  margin: 5px;
+  line-height: 140px;
   font-weight: 900;
   font-size: 16pt;
   color: white;
-  /* background-color: #7a7a7a; */
+}
+.slider-pane-item-slider {
+  align-content: space-around;
+  display: flow;
+  position: relative;
+  margin: 5px;
+  padding-left: 20px;
+  line-height: 140px;
+  font-weight: 900;
+  font-size: 16pt;
+  color: white;
 }
 
+/* Round Slider */
 .rs-control .rs-range-color {
   background-color: #0079f0;
 }
 .rs-control .rs-path-color {
   background-color: #d9d8d8;
-  /* background-color: rgba(0,0,0,0.2); */
 }
 .rs-control .rs-handle {
   background-color: #ffffff;
 }
 .rs-control .rs-bg-color {
-  /* background-color: white; */
   background-color: #7a7a7a;
 }
-
 .rs-control {
   color: white;
   font-weight: 900;
+}
+.rs-tooltip {
+  position: absolute;
+  line-height: 15px;
+  width: 110px;
+}
+
+#cycletime {
+  position: relative;
+  border-style: groove;
+  font-weight: 900;
+  font-size: 13pt;
+  padding: 5px;
+  text-align: center;
+  background-color: #0079f0;
+  color: white;
+  border-color: white;
+  border-radius: 5px;
+}
+#cycletime:focus {
+  outline: 3px solid transparent;
+}
+
+label {
+  font-weight: 900;
+  padding-right: 10px;
+  font-size: 14px;
+}
+input[type="checkbox"] + label {
+  padding-left: 50px;
+}
+input[type="radio"] + label {
+  padding-left: 50px;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+   opacity: 1;
 }

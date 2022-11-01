@@ -1007,11 +1007,14 @@ $("#slider").roundSlider({
   sliderType: "range",
   handleShape: "round",
   value: "2006,2020",
-  width: 13,
-  handleSize: "+10",
-  radius: 80,
+  circleShape: "pie",
+  width: 18,
+  radius: 70,
+  startAngle: 45,
   max: "2022",
   min: "2004",
+  lineCap: "round",
+  showTooltip: false,
   mouseScrollAction: true
 });
 

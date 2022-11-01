@@ -65,8 +65,8 @@
             </div>
             <div class="message-pane">
               <span class="message-pane-item">
-                <!-- <label for="quantity">Cycle layers time (between 1 and 5 sec):</label> -->
-                <input type="number" id="cycletime" name="cycletime" min="1" max="5" value="1" step="0.1">
+                <label for="cycletime">Cycle layers time ( 0.1 to 5 sec) :</label>
+                <input type="number" id="cycletime" name="cycletime" min="0.1" max="5" value="1" step="0.1">
               </span>
             </div>
             <div id="layers" class="layer-switcher"></div>
@@ -75,7 +75,7 @@
               <span class="slider-pane-item" id="sliderValMin">2006</span>
               <span class="slider-pane-item">-</span>
               <span class="slider-pane-item" id="sliderValMax">2020</span>
-              <span class="slider-pane-item"><div id="slider"></div></span>
+              <span class="slider-pane-item-slider"><div id="slider"></div></span>
             </div>
             <div class="status-pane">
               <span id="status" class="status-pane-item">&nbsp;</span>

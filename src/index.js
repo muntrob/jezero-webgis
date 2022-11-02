@@ -547,6 +547,7 @@ var remlyrsfunc = function() {
   selected = [];
   dynlyrgrp.set('title', 'Dynamic layer group (' + selected.length + ')');
   dynlyrgrp.getLayers().clear();
+  status.innerHTML = '&nbsp;' + selected.length + ' selected features';
   hrsc4aNdWfsSelection.getSource().clear();
   LayerSwitcher.renderPanel(map, toc, { reverse: true });
 }
@@ -1103,8 +1104,12 @@ map.on('singleclick', function (e) {
         LayerSwitcher.renderPanel(map, toc, { reverse: true });
       }
     });
-  
-    status.innerHTML = '&nbsp;' + selected.length + ' selected features';
+    
+    if (selected.length == 1) {
+      status.innerHTML = '&nbsp;' + selected.length + ' selected feature';
+    } else {
+      status.innerHTML = '&nbsp;' + selected.length + ' selected features';
+    }
   }
 });
 

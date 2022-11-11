@@ -321,16 +321,6 @@ var addPRTarget = function (feature) {
   });
 }
 
-// Read features from local (Geo)JSON file (path):
-const data = require('../assets/pr_targets.json');
-var geojsonObject = data;
-
-// Vector Source
-var pr_targets_source = new VectorSource({
-  features: new GeoJSON().readFeatures(geojsonObject)
-});
-pr_targets_source.forEachFeature(addPRTarget);
-
 // Styles
 var pr_styleFeature = new Style({
   text: new Text({
@@ -592,6 +582,7 @@ var refreshPRTargets = function () {
   allPRTargetsWfs.getSource().forEachFeature(function (feature) {
     pr_targets_lay.getSource().addFeature(feature);
   });
+  pr_targets_lay.getSource().forEachFeature(addPRTarget);
   console.dir(pr_targets_lay.getSource().getFeatures().length + ' PR sequences loaded.');
 }
 

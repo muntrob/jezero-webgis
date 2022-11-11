@@ -562,12 +562,12 @@ var initPRTargets = function () {
     // featureTypes: ['hrsc4and'],
     featureTypes: ['pr-targets'],
     outputFormat: 'geojson',
-    // srsName: 'EPSG:49910',
-    srsName: 'EPSG:49900',
+    srsName: 'EPSG:49910',
+    // srsName: 'EPSG:49900',
     maxFeatures: 10000,
     filter: andFilter(
-      lessThanOrEqualToFilter('stop_time', stopYear + '-01-01T00:00:00.000Z'),
-      greaterThanOrEqualToFilter('start_time', startYear + '-01-01T00:00:00.000Z'),
+      lessThanOrEqualToFilter('pr_date', stopYear + '-12-31T00:00:00.000Z'),
+      greaterThanOrEqualToFilter('pr_date', startYear + '-01-01T00:00:00.000Z'),
     ),
   });
   // fetch('https://maps.planet.fu-berlin.de/eqc-bin/wms?', {

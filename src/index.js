@@ -419,7 +419,7 @@ var allPRTargetsWfs = new Vector({
 var dynlyrgrp = new LayerGroup({
   fold: "close",
   title: 'Dynamic layer group'
-})
+});
 
 // HRSC ND4a Footprints WFS
 var hrsc4aNdWfs = new Vector({

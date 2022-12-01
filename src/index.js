@@ -594,7 +594,7 @@ var remlyrsfunc = function () {
   dynlyrgrp.getLayers().clear();
   status.innerHTML = '&nbsp;' + selected.length + ' selected features';
   hrsc4aNdWfsSelection.getSource().clear();
-  LayerSwitcher.renderPanel(map, toc, { reverse: true });
+  LayerSwitcher.renderPanel(map, toc, { reverse: true, groupSelectStyle: 'group' });
 }
 //Define remlyrs button onclick action
 //var remlyrstab = document.getElementById('remlyrstab');
@@ -612,7 +612,7 @@ var downloadlyrsfunc = function () {
   map.addLayer(lay06);
   map.addLayer(lay07);
   //map.setLayerIndex(lay01, 3);
-  LayerSwitcher.renderPanel(map, toc, { reverse: true });
+  LayerSwitcher.renderPanel(map, toc, { reverse: true, groupSelectStyle: 'group' });
 }
 //Define downloadlyrs button onclick action
 //var downloadlyrstab = document.getElementById('downloadlyrstab');
@@ -773,7 +773,7 @@ map.addControl(sidebar);
 // Layer Switcher
 //------------------------------------------------------------------------------------------
 var toc = document.getElementById('layers');
-LayerSwitcher.renderPanel(map, toc, { reverse: true });
+LayerSwitcher.renderPanel(map, toc, { reverse: true, groupSelectStyle: 'group' });
 //------------------------------------------------------------------------------------------
 
 
@@ -1130,7 +1130,7 @@ map.on('singleclick', function (e) {
         hrsc4aNdWfsSelection.getSource().addFeatures(selected);
 
 
-        LayerSwitcher.renderPanel(map, toc, { reverse: true });
+        LayerSwitcher.renderPanel(map, toc, { reverse: true, groupSelectStyle: 'group' });
       } else {
         selected.splice(selIndex, 1);
         console.log(selected);
@@ -1146,9 +1146,8 @@ map.on('singleclick', function (e) {
 
         hrsc4aNdWfsSelection.getSource().clear();
         hrsc4aNdWfsSelection.getSource().addFeatures(selected);
-
-
-        LayerSwitcher.renderPanel(map, toc, { reverse: true });
+        
+        LayerSwitcher.renderPanel(map, toc, { reverse: true, groupSelectStyle: 'group' });
       }
     });
 

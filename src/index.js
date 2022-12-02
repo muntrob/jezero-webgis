@@ -67,6 +67,10 @@ var currentFeature;
 var currentYear = new Date().getFullYear();
 var startYear = "2006";
 var stopYear = "2020";
+var startDate = startYear + "-01-01";
+var stopDate = stopYear + "-12-31";
+const dateStartEl = document.getElementById("startdate");
+const dateStopEl = document.getElementById("stopdate");
 var textarray = [];
 textarray[0] = `
 <h3>Pliva Vallis</h3><p>Pliva Vallis in the east of Jezero Crater is the outflow channel through
@@ -476,8 +480,8 @@ var initHrsc4a = function () {
     // srsName: 'EPSG:49900',
     maxFeatures: 10000,
     filter: andFilter(
-      lessThanOrEqualToFilter('stop_time', stopYear + '-01-01T00:00:00.000Z'),
-      greaterThanOrEqualToFilter('start_time', startYear + '-01-01T00:00:00.000Z'),
+      lessThanOrEqualToFilter('stop_time', stopDate + 'T00:00:00.000Z'),
+      greaterThanOrEqualToFilter('start_time', startDate + 'T00:00:00.000Z'),
     ),
   });
   fetch('https://maps.planet.fu-berlin.de/eqc-bin/wms?', {
@@ -556,8 +560,8 @@ var initPRTargets = function () {
     // srsName: 'EPSG:49900',
     maxFeatures: 10000,
     filter: andFilter(
-      lessThanOrEqualToFilter('pr_date', stopYear + '-12-31T00:00:00.000Z'),
-      greaterThanOrEqualToFilter('pr_date', startYear + '-01-01T00:00:00.000Z'),
+      lessThanOrEqualToFilter('pr_date', stopDate + 'T00:00:00.000Z'),
+      greaterThanOrEqualToFilter('pr_date', startDate + 'T00:00:00.000Z'),
     ),
   });
   // fetch('https://maps.planet.fu-berlin.de/eqc-bin/wms?', {
@@ -1052,7 +1056,8 @@ map.on('loadstart', function (event) {
 $("#slider").roundSlider({
   sliderType: "range",
   handleShape: "round",
-  value: "2006,2020",
+  // value: "2006,2020",
+  value: startYear + "," + stopYear,
   circleShape: "pie",
   width: 18,
   radius: 70,
@@ -1067,11 +1072,35 @@ $("#slider").roundSlider({
 $("#slider").on("drag change", function (e) {
   startYear = e.value.split(",")[0];
   stopYear = e.value.split(",")[1];
+  startDate = startYear + "-01-01";
+  stopDate = stopYear + "-12-31";
+  dateStartEl.value = startDate;
+  dateStopEl.value = stopDate;
   $("#sliderValMin").text(startYear);
   $("#sliderValMax").text(stopYear);
   initHrsc4a();
   initPRTargets();
 });
+
+// Event: Change Start Date input
+dateStartEl.onchange = function (event) {
+  startDate = dateStartEl.value;
+  startYear = startDate.split('-')[0];
+  $("#sliderValMin").text(startYear);
+  $("#slider").roundSlider("option", { "value": startYear + "," + stopYear });
+  initHrsc4a();
+  initPRTargets();
+};
+
+// Event: Change Stop Date input
+dateStopEl.onchange = function (event) {
+  stopDate = dateStopEl.value;
+  stopYear = stopDate.split('-')[0];
+  $("#sliderValMax").text(stopYear);
+  $("#slider").roundSlider("option", { "value": startYear + "," + stopYear });
+  initHrsc4a();
+  initPRTargets();
+};
 //------------------------------------------------------------------------------------------
 
 
